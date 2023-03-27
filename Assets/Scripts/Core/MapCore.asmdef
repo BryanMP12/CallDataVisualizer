@@ -1,0 +1,16 @@
+{
+    "name": "MapCore",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b84c3c223fe72164583c407b6f4b9242"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

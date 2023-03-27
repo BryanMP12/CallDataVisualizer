@@ -1,5 +1,4 @@
-﻿using Map;
-using Map.PointHolder;
+﻿using Core.PointHolder;
 using UnityEditor;
 using UnityEngine;
 

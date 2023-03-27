@@ -1,8 +1,8 @@
 ﻿using System;
+using General;
 using UI.Gallery;
 using UnityEngine;
 using UnityEngine.UI;
-using UserInput;
 
 namespace UI.FileSelectionGallery {
     public class FileSelectionDisplay : PooledGallery<FileSelectionElementRep> {
@@ -10,7 +10,7 @@ namespace UI.FileSelectionGallery {
         Canvas canvas;
         Action downloadAction;
         void Awake() {
-            FileSelectionElementRep.SetRectLimits(new Vector2(-rectTransform.rect.height, 0));
+            FileSelectionElementRep.SetRectLimits(new Vector2(-parent.rect.height, 0));
             MoveOffset(0);
             canvas = GetComponent<Canvas>();
             downloadButton.onClick.AddListener(delegate { downloadAction?.Invoke(); });

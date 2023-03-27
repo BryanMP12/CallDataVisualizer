@@ -20,16 +20,14 @@ namespace UI.FileSelectionGallery {
             rect = GetComponent<RectTransform>();
             //deleteButton.onClick.AddListener(() => { fileRep?.DeletePath(); });
         }
-        public void SetPosition(float position) {
-            rect.anchoredPosition = new Vector2(0, position);
-        }
+        public void SetPosition(float position) => rect.anchoredPosition = new Vector2(0, position);
         public void SetVisualState(bool state) =>
             baseImage.enabled = fileName.enabled = filePath.enabled = 
                 loadButton.enabled = buttonImage.enabled = buttonText.enabled /*= deleteButton.enabled*/ = state;
         public void SetRep(ElementRep rep) {
             fileRep = (FileSelectionElementRep) rep;
-            fileName.SetText(FullPathToFileName(fileRep.filePath));
-            filePath.SetText(fileRep.filePath);
+            fileName.SetText(FullPathToFileName(fileRep.FilePath));
+            filePath.SetText(fileRep.FilePath);
             rect.anchoredPosition = new Vector2(0, rep.initialYPosition);
         }
         static string FullPathToFileName(string path) {

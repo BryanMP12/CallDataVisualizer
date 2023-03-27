@@ -4,12 +4,12 @@ using UnityEngine;
 namespace UI.Gallery {
     public class PooledGallery<T> : MonoBehaviour where T : ElementRep, new() {
         [SerializeField] GameObject elementPrefab;
-        [SerializeField] protected RectTransform rectTransform;
+        [SerializeField] protected RectTransform parent;
         [SerializeField] float scrollSpeed;
         readonly Stack<IGalleryElement> AvailableElements = new Stack<IGalleryElement>();
         readonly Stack<int> ReadyIndices = new Stack<int>();
         readonly List<T> ElementReps = new List<T>();
-        float GalleryHeight => rectTransform.rect.height;
+        float GalleryHeight => parent.rect.height;
         readonly float ElementHeight = new T().YSize;
         Vector2 OffsetLimits = new Vector2(0, 0); //max, min
         float currentOffset;
@@ -32,13 +32,13 @@ namespace UI.Gallery {
         void AddAvailableDisplays(int count) {
             if (count < 0) return;
             for (int i = 0; i < count; i++) {
-                IGalleryElement element = Instantiate(elementPrefab, rectTransform).GetComponent<IGalleryElement>();
+                IGalleryElement element = Instantiate(elementPrefab, parent).GetComponent<IGalleryElement>();
                 element.InitializeDisplay();
                 element.SetVisualState(false);
                 AvailableElements.Push(element);
             }
         }
-        protected void MoveOffset(float delta) {
+        protected void MoveOffset(float delta, Vector2 direction = default) {
             float offset = currentOffset - delta * scrollSpeed;
             if (offset < OffsetLimits.x || OffsetLimits.y < offset) return;
             currentOffset = offset;

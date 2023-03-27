@@ -38,7 +38,7 @@
             StructuredBuffer<Point> _Points;
             uniform float4 _ColorArray[6];
             //0 if no draw, 1 if draw
-            uniform float _WriteDescription[1];
+            float _WriteDescription[200];
 
             v2f vert(appdata_t i, const uint instanceID: SV_InstanceID)
             {
