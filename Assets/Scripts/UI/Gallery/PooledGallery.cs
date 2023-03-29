@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UI.Gallery {
@@ -14,10 +16,15 @@ namespace UI.Gallery {
         Vector2 OffsetLimits = new Vector2(0, 0); //max, min
         float currentOffset;
         public void AddRep(T rep) {
-            rep.InitializeRep(ElementReps.Count * -ElementHeight);
+            rep.SetYPosition(ElementReps.Count * -ElementHeight);
             ElementReps.Add(rep);
             ResetOffsetLimits();
             MoveOffset(0);
+        }
+        public void SortReps(Comparison<T> compare) {
+            ElementReps.Sort(compare);
+            for(int i = 0; i < ElementReps.Count; i++) ElementReps[i].SetYPosition(i * -ElementHeight);
+            MoveReps(0);
         }
         public void RemoveRep(T rep) {
             ElementReps.Remove(rep);
@@ -41,10 +48,10 @@ namespace UI.Gallery {
         protected void MoveOffset(float delta, Vector2 direction = default) {
             float offset = currentOffset - delta * scrollSpeed;
             if (offset < OffsetLimits.x || OffsetLimits.y < offset) return;
-            currentOffset = offset;
             MoveReps(offset);
         }
         void MoveReps(float offset) {
+            currentOffset = offset;
             for (int i = 0; i < ElementReps.Count; i++) {
                 int checkVal = ElementReps[i].SetOffset(offset);
                 switch (checkVal) {

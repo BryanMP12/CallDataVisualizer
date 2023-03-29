@@ -35,7 +35,7 @@ namespace UI {
                     _                       => Color.black
                 };
         }
-        public void ForceReset() => SetVisual(0);
+        public void ResetVisual() => SetVisual(0);
         enum SwitchType { ON_OFF, ONE_ORDERING, TWO_ORDERING }
     }
 }

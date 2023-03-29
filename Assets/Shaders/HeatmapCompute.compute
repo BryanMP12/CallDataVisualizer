@@ -1,24 +1,44 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
 
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-RWTexture2D<float> output;
-StructuredBuffer<float2> points;
-int point_count;
-float radius;
+//Heatmap Stuff
+RWTexture2D<float> _Output;
+int _PointCount;
+float _Radius;
+
+//Point Stuff
+struct Point
+{
+    float2 position;
+    int priority;
+    int description_index;
+    int officer_initiated;
+};
+
+StructuredBuffer<Point> _Points;
+StructuredBuffer<int> _WriteDescription; //200
+//0, 1, 2, 3, 4, 5, NonOfficerInitiated, OfficerInitiated
+StructuredBuffer<int> _VarsToRender; //8
+
+#define RenderNonOfficerInitiated _VarsToRender[6] == 1
+#define RenderOfficerInitiated _VarsToRender[7] == 1
 
 [numthreads(8,8,1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    half h = 0;
-    for (int i = 0; i < point_count; i++)
+    float h = 0;
+    for (int i = 0; i < _PointCount; i++)
     {
-        const half di = distance(id.xy, points[i]);
-        //const half di = distance(IN.texcoord.xy, float2(0.5, 0.5));
-        const half hi = 1 - saturate(di / radius);
-        h += hi;
+        Point p = _Points[i];
+        const bool render =
+            _WriteDescription[_Points[i].description_index] == 1
+            && (!p.officer_initiated && RenderNonOfficerInitiated || p.officer_initiated && RenderOfficerInitiated)
+            && _VarsToRender[p.priority] == 1;
+
+        const half di = distance(id.xy, _Points[i].position);
+        const half hi = 1 - saturate(di / _Radius);
+        h += hi * (render ? 1 : 0);
     }
     h /= 1000;
-    output[id.xy] = h;
+    _Output[id.xy] = h;
 }

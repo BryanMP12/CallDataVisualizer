@@ -38,11 +38,16 @@
 
             StructuredBuffer<Point> _Points;
             float4 _ColorArray[6];
-            float _RenderPriority[6] = {1, 1, 1, 1, 1, 1};
             //0 if no draw, 1 if draw
-            float _WriteDescription[200];
-            float _RenderNonOfficerInitiated = 1;
-            float _RenderOfficerInitiated = 1;
+            StructuredBuffer<int> _WriteDescription; //200
+            //0, 1, 2, 3, 4, 5, NonOfficerInitiated, OfficerInitiated
+            StructuredBuffer<int> _VarsToRender; //8
+            #define RenderNonOfficerInitiated _VarsToRender[6] == 1
+            #define RenderOfficerInitiated _VarsToRender[7] == 1
+            // float _RenderPriority[6] = {1, 1, 1, 1, 1, 1};
+            // float _WriteDescription[200];
+            // float _RenderNonOfficerInitiated = 1;
+            // float _RenderOfficerInitiated = 1;
 
             v2f vert(appdata_t i, const uint instanceID: SV_InstanceID)
             {
@@ -52,9 +57,10 @@
                 const int priority_index = _Points[instanceID].priority;
                 o.color = _ColorArray[priority_index];
                 const bool officer_initiated = _Points[instanceID].officer_initiated > 0.5;
-                const bool render = (_WriteDescription[_Points[instanceID].description_index] > 0.5)
-                    && ((!officer_initiated && _RenderNonOfficerInitiated > 0.5) || officer_initiated && _RenderOfficerInitiated > 0.5)
-                    && _RenderPriority[priority_index] > 0.5;
+                const bool render =
+                    _WriteDescription[_Points[instanceID].description_index] == 1
+                    && (!officer_initiated && RenderNonOfficerInitiated || officer_initiated && RenderOfficerInitiated)
+                    && _VarsToRender[priority_index] == 1;
                 o.color.a = render ? 1 : 0;
                 return o;
             }

@@ -8,7 +8,7 @@ namespace UI.Gallery {
         IGalleryElement poolElement;
         public abstract float YSize { get; }
         public abstract Vector2 PositionLimits { get; }
-        public void InitializeRep(float yPos) => initialYPosition = yPos;
+        public void SetYPosition(float yPos) => initialYPosition = yPos;
         public int SetOffset(float offset) {
             float position = initialYPosition + offset;
             if (inUse) poolElement.SetPosition(position);

@@ -4,7 +4,7 @@
     {
         _InputTexture ("Texture", 2D) = "white" {}
         _ColorRamp ("Color Ramp", 2D) = "white" {}
-        _Intensity ("Intensity", Range(0, 10)) = 0
+        _Intensity ("Intensity", Range(0, 20)) = 0
         _Threshold ("Threshold", Range(0, 0.2)) = 0
     }
     SubShader

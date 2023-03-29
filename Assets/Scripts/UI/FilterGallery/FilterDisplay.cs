@@ -10,11 +10,11 @@ namespace UI.FilterGallery {
         TextImage orderCategory;
         [SerializeField] TextImage orderType;
         //
-        [Header("Titles")] [SerializeField] SwitchButton nameTitle;
-        [SerializeField] SwitchButton totalCountTitle;
-        [SerializeField] SwitchButton nonOfficerInitiatedTitle;
-        [SerializeField] SwitchButton officerInitiatedTitle;
-        [SerializeField] SwitchButton[] priorityTitle;
+        [Header("Titles")] [SerializeField] SwitchButton nameOrderButton;
+        [SerializeField] SwitchButton totalCountOrderButton;
+        [SerializeField] SwitchButton nonOfficerInitiatedOrderButton;
+        [SerializeField] SwitchButton officerInitiatedOrderButton;
+        [SerializeField] SwitchButton[] priorityOrderButton;
         //
         [Header("Total Count")] [SerializeField]
         TextImage totalCountText;
@@ -29,6 +29,23 @@ namespace UI.FilterGallery {
         void Awake() {
             canvas = GetComponent<Canvas>();
             Enabled = false;
+        }
+        public void InitializeOrders(Func<int> nameOrderT, Func<int> countOrderT, Func<int> nonOfficerOrderT, Func<int> officerOrderT, Func<int>[] priorityOrderT) {
+            nameOrderButton.SetAction(delegate { nameOrderButton.SetVisual(nameOrderT.Invoke()); });
+            totalCountOrderButton.SetAction(delegate { totalCountOrderButton.SetVisual(countOrderT.Invoke()); });
+            nonOfficerInitiatedOrderButton.SetAction(delegate { nonOfficerInitiatedOrderButton.SetVisual(nonOfficerOrderT.Invoke()); });
+            officerInitiatedOrderButton.SetAction(delegate { officerInitiatedOrderButton.SetVisual(officerOrderT.Invoke()); });
+            for (int i = 0; i < 6; i++) {
+                int index = i;
+                priorityOrderButton[i].SetAction(delegate { priorityOrderButton[index].SetVisual(priorityOrderT[index].Invoke()); });
+            }
+        }
+        public void ResetAllOrderButtonVisuals() {
+            nameOrderButton.ResetVisual();
+            totalCountOrderButton.ResetVisual();
+            nonOfficerInitiatedOrderButton.ResetVisual();
+            officerInitiatedOrderButton.ResetVisual();
+            for(int i = 0; i < 6; i++) priorityOrderButton[i].ResetVisual();
         }
         public void InitializeToggles(Func<bool> nonOfficerInitiatedT, Func<bool> officerInitiatedT, Func<bool>[] priorityT) {
             nonOfficerInitiatedToggle.SetAction(delegate { nonOfficerInitiatedToggle.SetVisual(nonOfficerInitiatedT.Invoke()); });

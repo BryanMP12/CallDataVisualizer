@@ -10,6 +10,11 @@ namespace UI.FilterGallery {
         public readonly int OfficerInitiatedCount;
         public readonly int[] PriorityCount;
         public int NonOfficerInitiatedCount() => TotalCount - OfficerInitiatedCount;
+        //Ratio
+        public float NonOfficerInitiatedRatio => (float) NonOfficerInitiatedCount() / TotalCount;
+        public float OfficerInitiatedRatio => (float) OfficerInitiatedCount / TotalCount;
+        public float PriorityRatio(int priority) => (float) PriorityCount[priority] / TotalCount;
+        //
         //
         readonly Action<bool> SwitchButtonClicked;
         public bool SwitchedOn = true;
