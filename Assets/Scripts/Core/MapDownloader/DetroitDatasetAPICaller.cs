@@ -20,7 +20,7 @@ namespace Core.MapDownloader {
                 UnityWebRequest www = JsonDownloader(GetCountOnlyURL);
                 yield return SendRequest(www);
                 string result = DownloadHandlerBuffer.GetContent(www);
-                count = DataInterpreterManager.DeserializeCountResult(result);
+                count = DataInterpreter.DeserializeCountResult(result);
                 Debug.Log($"DataCount: {count}");
             }
             {

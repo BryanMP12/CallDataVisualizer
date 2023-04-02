@@ -7,25 +7,21 @@ namespace Core.Render {
         static readonly bool[] VarsToRender = new bool[8] {true, true, true, true, true, true, true, true};
         public static void SetDescriptionsToRender(bool[] descriptionsToRender) {
             HeatmapGenerator.SetDescriptionsToRender(descriptionsToRender);
-            HeatmapGenerator.RenderHeatmap();
             PointRenderer.SetDescriptionsToRender(descriptionsToRender);
         }
         public static void SetPrioritiesToRender(bool[] priorityToRender) {
             for (int i = 0; i < 6; i++) VarsToRender[i] = priorityToRender[i];
             HeatmapGenerator.SetVarsToRender(VarsToRender);
-            HeatmapGenerator.RenderHeatmap();
             PointRenderer.SetVarsToRender(VarsToRender);
         }
         public static void SetNonOfficerInitiatedToRender(bool b) {
             VarsToRender[6] = b;
             HeatmapGenerator.SetVarsToRender(VarsToRender);
-            HeatmapGenerator.RenderHeatmap();
             PointRenderer.SetVarsToRender(VarsToRender);
         }
         public static void SetOfficerInitiatedToRender(bool b) {
             VarsToRender[7] = b;
             HeatmapGenerator.SetVarsToRender(VarsToRender);
-            HeatmapGenerator.RenderHeatmap();
             PointRenderer.SetVarsToRender(VarsToRender);
         }
     }

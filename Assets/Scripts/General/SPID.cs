@@ -13,5 +13,7 @@ namespace General {
         public static readonly int _RenderOfficerInitiated = Shader.PropertyToID("_RenderOfficerInitiated");
         public static readonly int _InputTexture = Shader.PropertyToID("_InputTexture");
         public static readonly int _VarsToRender = Shader.PropertyToID("_VarsToRender");
+        public static readonly int _Intensity = Shader.PropertyToID("_Intensity");
+        public static readonly int _Threshold = Shader.PropertyToID("_Threshold");
     }
 }

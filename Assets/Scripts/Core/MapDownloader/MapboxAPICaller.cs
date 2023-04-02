@@ -1,6 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections;
-using Core;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -43,3 +43,4 @@ namespace Core.MapDownloader {
         }
     }
 }
+#endif

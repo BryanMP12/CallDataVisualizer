@@ -1,4 +1,4 @@
-﻿using Core.PointHolder;
+﻿using Core.Points;
 using General;
 using UnityEngine;
 
@@ -12,8 +12,8 @@ namespace Core.Render.Points {
         static ComputeBuffer drawDescriptionsBuffer;
         static ComputeBuffer argsBuffer;
         static readonly Color[] priorityColors = new Color[6] {
-            Color.black, Color.Lerp(Color.green, Color.red, 1 / 5f), Color.Lerp(Color.green, Color.red, 2 / 5f), Color.Lerp(Color.green, Color.red, 3 / 5f),
-            Color.Lerp(Color.green, Color.red, 4 / 5f), Color.Lerp(Color.green, Color.red, 5 / 5f)
+            Color.black, Color.Lerp(Color.green, Color.red, 4 / 4f), Color.Lerp(Color.green, Color.red, 3 / 4f), Color.Lerp(Color.green, Color.red, 2 / 4f),
+            Color.Lerp(Color.green, Color.red, 1 / 4f), Color.Lerp(Color.green, Color.red, 0 / 4f)
         };
         public static void InitializePoints(Material m) {
             material = m;
@@ -80,6 +80,7 @@ namespace Core.Render.Points {
             argsBuffer?.Release();
             argsBuffer = null;
         }
+        public static void SetSize(float size) { SetMesh(size); }
         static void SetMesh(float s = 0.5f, float r = 45) {
             Mesh m = new Mesh();
             Vector3[] vertices = new Vector3[4] {new Vector3(-s, -s), new Vector3(s, -s), new Vector3(-s, s), new Vector3(s, s)};

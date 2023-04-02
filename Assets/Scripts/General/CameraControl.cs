@@ -20,7 +20,8 @@ namespace General {
             MouseInput.ScrollDelta -= OnScroll;
             MouseInput.DragDelta -= OnDrag;
         }
-        public static void SetCameraMovementState(bool state) => instance.movementOn = state;
+        public static bool SetCameraMovementState(bool state) => instance.movementOn = state;
+        public static bool ToggleCameraMovementState() => instance.movementOn = !instance.movementOn;
         void OnScroll(float scrollDelta, Vector2 direction) {
             if (!movementOn) return;
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollDelta * zoomSpeed, scrollLimits.x, scrollLimits.y);

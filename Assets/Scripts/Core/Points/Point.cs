@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core {
+namespace Core.Points {
     [Serializable]
     public struct Point {
         public double Longitude;

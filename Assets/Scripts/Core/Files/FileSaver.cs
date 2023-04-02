@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Core.PointHolder;
+using Core.Points;
 using UnityEngine;
 
 namespace Core.Files {

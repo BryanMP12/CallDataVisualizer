@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.RawDataInterpreter;
+using Core.RawDataInterpreter.CallData;
 
-namespace Core.PointHolder {
+namespace Core.Points {
     [Serializable]
     public class SerializedPointHolder {
         public string name;

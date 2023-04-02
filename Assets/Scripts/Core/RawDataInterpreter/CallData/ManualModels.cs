@@ -2,7 +2,7 @@
 
 //These models are used for when you manually downloaded the full dataset through the website, unfiltered.
 //Not the API version.
-namespace Core.RawDataInterpreter {
+namespace Core.RawDataInterpreter.CallData {
     public static class ManualModels {
         public class Data {
             public string type { get; set; }

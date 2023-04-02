@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 //These models are used for when you downloaded with the API
-namespace Core.RawDataInterpreter {
+namespace Core.RawDataInterpreter.CallData {
     public static class APIModels {
         public class Count {
             public int count;

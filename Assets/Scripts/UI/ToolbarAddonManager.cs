@@ -20,10 +20,10 @@ namespace UI {
                 if (index == i) {
                     if (toolBarAddons[i].addon.Enabled) {
                         toolBarAddons[i].addon.DisableDisplay();
-                        CameraControl.SetCameraMovementState(true);
+                        //CameraControl.SetCameraMovementState(true);
                     } else {
                         toolBarAddons[i].addon.EnableDisplay();
-                        CameraControl.SetCameraMovementState(false);
+                        //CameraControl.SetCameraMovementState(false);
                     }
                 } else toolBarAddons[i].addon.DisableDisplay();
             }

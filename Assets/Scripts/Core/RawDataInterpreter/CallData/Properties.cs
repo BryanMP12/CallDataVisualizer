@@ -1,4 +1,4 @@
-﻿namespace Core.RawDataInterpreter {
+﻿namespace Core.RawDataInterpreter.CallData {
     public class Properties {
         // public ulong incident_id { get; set; }
         // public string agency { get; set; }

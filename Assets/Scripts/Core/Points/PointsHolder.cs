@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.PointHolder {
+namespace Core.Points {
     public static class PointsHolder {
         public static event Action DataSet;
         public static int TotalPointCount { get; private set; }
