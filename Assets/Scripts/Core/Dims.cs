@@ -16,6 +16,10 @@ namespace Core {
         public static Vector2 CoordToPort(double lon, double lat) => new Vector2(
             (float) (Width * InverseLerp(bbox[0], bbox[2], lon)),
             (float) (Height * InverseLerp(bbox[1], bbox[3], lat)));
+        public static double[] CoordToPortDouble(double lon, double lat) => new double[2] {
+            Width * InverseLerp(bbox[0], bbox[2], lon),
+            Height * InverseLerp(bbox[1], bbox[3], lat)
+        };
         static double InverseLerp(double a, double b, double c) => (c - a) / (b - a);
     }
 }

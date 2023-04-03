@@ -26,7 +26,6 @@ namespace Core.Files {
         }
         public static string[] GetDatasets() {
             string[] files = Directory.GetFiles(DatasetDirectory);
-            foreach (string s in files) Debug.Log(s);
             return files;
         }
         public static SerializedPointHolder LoadPointsWithPath(string path) {
