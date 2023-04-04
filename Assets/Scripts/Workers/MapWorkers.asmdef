@@ -1,11 +1,8 @@
 {
-    "name": "MapManagers",
+    "name": "MapWorkers",
     "rootNamespace": "",
     "references": [
-        "GUID:5f9bb95466d8c0e4f97c95e1a1c8a073",
-        "GUID:832d189a633cbb04c805a67e304939e1",
-        "GUID:b84c3c223fe72164583c407b6f4b9242",
-        "GUID:10249d0c76a255a4da56285558fd8a73"
+        "GUID:832d189a633cbb04c805a67e304939e1"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -19,7 +19,6 @@ namespace Managers {
         void Start() {
             string[] files = FileSaver.GetDatasets();
             foreach (string path in files) fileSelectionDisplay.AddRep(NewRep(path));
-            fileSelectionDisplay.EnableDisplay();
             fileSelectionDisplay.AddDownloadListener(delegate { StartCoroutine(DetroitDatasetAPICaller.DownloadDataset(OnFinishDownload)); });
         }
         void OnFinishDownload(List<string> list, int count) {

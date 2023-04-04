@@ -1,7 +1,7 @@
 ﻿using Core;
 using UnityEngine;
 
-namespace Core {
+namespace Managers {
     public class MapManager : MonoBehaviour {
         [SerializeField] Transform mapTransform;
         [SerializeField] Camera cam;

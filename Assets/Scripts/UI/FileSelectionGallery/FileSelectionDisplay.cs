@@ -5,23 +5,25 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.FileSelectionGallery {
-    public class FileSelectionDisplay : PooledGallery<FileSelectionElementRep> {
+    public class FileSelectionDisplay : PooledGallery<FileSelectionElementRep>, IAddon {
         [SerializeField] Button downloadButton;
         Canvas canvas;
         Action downloadAction;
+        public bool Enabled { get; set; }
         void Awake() {
             FileSelectionElementRep.SetRectLimits(new Vector2(-parent.rect.height, 0));
             MoveOffset(0);
             canvas = GetComponent<Canvas>();
+            Enabled = false;
             downloadButton.onClick.AddListener(delegate { downloadAction?.Invoke(); });
         }
         public void AddDownloadListener(Action download) => downloadAction = download;
         public void EnableDisplay() {
-            canvas.enabled = true;
+            canvas.enabled = Enabled = true;
             MouseInput.ScrollDelta += MoveOffset;
         }
         public void DisableDisplay() {
-            canvas.enabled = false;
+            canvas.enabled = Enabled = false;
             MouseInput.ScrollDelta -= MoveOffset;
         }
     }

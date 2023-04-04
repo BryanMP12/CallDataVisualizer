@@ -5,6 +5,7 @@ namespace General {
     public class MouseInput : MonoBehaviour {
         [SerializeField] Camera cam;
         Vector2 initialLocation;
+        public static event Action<Vector2> MouseClick;
         public static event Action<float, Vector2> ScrollDelta;
         public static event Action<Vector2> DragDelta;
         void Update() {
@@ -12,11 +13,14 @@ namespace General {
             if (Input.GetMouseButton(0)) Drag(cam.ScreenToWorldPoint(Input.mousePosition));
             Scroll(Input.mouseScrollDelta, cam.ScreenToViewportPoint(Input.mousePosition));
         }
-        void Click(Vector2 position) => initialLocation = position;
+        void Click(Vector2 position) {
+            initialLocation = position; 
+            MouseClick?.Invoke(position);
+        }
         void Drag(Vector2 position) {
             Vector2 difference = initialLocation - position;
             if (difference.magnitude < 0.1f) return;
-            DragDelta?.Invoke(difference); 
+            DragDelta?.Invoke(difference);
         }
         void Scroll(Vector2 scrollDelta, Vector2 mousePos) {
             if (scrollDelta.magnitude < 0.01f) return;

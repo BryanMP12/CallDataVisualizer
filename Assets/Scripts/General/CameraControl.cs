@@ -11,6 +11,7 @@ namespace General {
         void Awake() {
             instance = this;
             cam = GetComponent<Camera>();
+            SetCameraMovementState(true);
         }
         void OnEnable() {
             MouseInput.ScrollDelta += OnScroll;

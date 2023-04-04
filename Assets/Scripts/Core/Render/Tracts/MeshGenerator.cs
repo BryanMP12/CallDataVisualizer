@@ -1,38 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Core;
+﻿using System.Collections.Generic;
 using Core.CensusTracts;
-using TriangleNet;
 using TriangleNet.Geometry;
 using TriangleNet.Meshing;
-using TriangleNet.Meshing.Algorithm;
 using TriangleNet.Topology;
 using UnityEngine;
 
-namespace Managers {
-    public class CensusTractRenderer : MonoBehaviour {
-        [SerializeField] CensusTractHolder holder;
-        [SerializeField] GameObject censusTractPrefab;
-        [SerializeField] MeshFilter filter;
-        [SerializeField] [Range(0, 250)] int val;
-        void Awake() {
-            foreach (CensusTract tract in holder.CensusTracts) {
-                LineRenderer lr = Instantiate(censusTractPrefab).GetComponent<LineRenderer>();
-                lr.positionCount = tract.Shape.Count;
-                for (int i = 0; i < tract.Shape.Count; i++) {
-                    Vector2 p = Dims.CoordToPort(tract.Shape[i].Lon, tract.Shape[i].Lat);
-                    lr.SetPosition(i, new Vector3(p.x, p.y, -2));
-                }
-            }
-        }
-        void MakeMesh(int index) {
-            //Dwyer
-            //Incremental
-            //SweepLine
-
-            List<Coordinate> coords = holder.CensusTracts[index].Shape;
-
+namespace Core.Render.Tracts {
+    public static class MeshGenerator {
+        public static Mesh MakeMesh(IReadOnlyList<Coordinate> coords, int index) {
             int coordCount = coords.Count;
             Vertex[] vertices = new Vertex[coordCount];
             for (int i = 0; i < coordCount; i++) {
@@ -49,13 +24,15 @@ namespace Managers {
             QualityOptions qo = new QualityOptions() { };
             IMesh iMesh = p.Triangulate(co, qo);
 
-            UnityEngine.Mesh mesh = new UnityEngine.Mesh() {
+            Vector2[] uvs = new Vector2[iMesh.Vertices.Count];
+            for (int i = 0; i < uvs.Length; i++) uvs[i] = new Vector2(index, index);
+            
+            return new Mesh() {
                 vertices = GetVertices(iMesh.Vertices),
-                triangles = GetTriangleIds(iMesh.Triangles)
+                triangles = GetTriangleIds(iMesh.Triangles),
+                uv = uvs
             };
-            filter.mesh = mesh;
         }
-        void OnValidate() { MakeMesh(val); }
         static Vector3[] GetVertices(ICollection<Vertex> vertices) {
             Vector3[] verts = new Vector3[vertices.Count];
             int index = 0;

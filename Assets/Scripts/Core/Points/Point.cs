@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Core.Points {
     [Serializable]
@@ -17,5 +18,6 @@ namespace Core.Points {
             DescriptionIndex = di;
             OfficerInitiated = oi;
         }
+        public Vector2 MapPosition() => Dims.CoordToPort(Longitude, Latitude);
     }
 }
