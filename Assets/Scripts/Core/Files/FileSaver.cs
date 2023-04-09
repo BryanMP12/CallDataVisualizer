@@ -24,10 +24,7 @@ namespace Core.Files {
             fileStream.Close();
             return path;
         }
-        public static string[] GetDatasets() {
-            string[] files = Directory.GetFiles(DatasetDirectory);
-            return files;
-        }
+        public static string[] GetDatasets() => Directory.GetFiles(DatasetDirectory);
         public static SerializedPointHolder LoadPointsWithPath(string path) {
             if (!File.Exists(path)) {
                 Debug.LogError("Could not find path");

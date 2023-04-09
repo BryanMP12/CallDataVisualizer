@@ -15,5 +15,6 @@ namespace General {
         public static readonly int _VarsToRender = Shader.PropertyToID("_VarsToRender");
         public static readonly int _Intensity = Shader.PropertyToID("_Intensity");
         public static readonly int _Threshold = Shader.PropertyToID("_Threshold");
+        public static readonly int _Map = Shader.PropertyToID("_Map");
     }
 }

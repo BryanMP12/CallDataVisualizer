@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using System.Collections.Generic;
+using Core;
 using Core.CensusTracts;
 using Core.Render.Tracts;
 using UnityEngine;
@@ -8,11 +9,11 @@ namespace Workers {
         [SerializeField] LineRenderer borderOutline;
         [SerializeField] MeshFilter filter;
         [SerializeField] MeshCollider meshCollider;
-        int tractIndex;
-        int pointCount;
+        public int TractIndex { get; private set; }
+        public readonly List<int> Points = new List<int>();
         static int MaxPointCount;
         public void Initialize(CensusTract tract, int index) {
-            tractIndex = index;
+            TractIndex = index;
             borderOutline.positionCount = tract.Shape.Count;
             for (int i = 0; i < tract.Shape.Count; i++) {
                 Vector2 p = Dims.CoordToPort(tract.Shape[i].Lon, tract.Shape[i].Lat);
@@ -22,15 +23,13 @@ namespace Workers {
             filter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
         }
-        public void AddPoint() {
-            pointCount++;
-            if (pointCount > MaxPointCount) MaxPointCount = pointCount;
+        public void AddPoint(int pointIndex) {
+            Points.Add(pointIndex);
         }
         public Color CountColor() {
-            Color c = Color.Lerp(Color.green, Color.red, pointCount / (float) MaxPointCount);
+            Color c = Color.Lerp(Color.green, Color.red, Points.Count / (float) MaxPointCount);
             c.a = 0.2f;
             return c;
         }
-        public int TractIndex() => tractIndex;
     }
 }

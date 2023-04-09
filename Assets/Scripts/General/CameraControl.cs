@@ -3,14 +3,16 @@
 namespace General {
     public class CameraControl : MonoBehaviour {
         Camera cam;
+        Transform camTransform;
         [SerializeField] float zoomSpeed;
         [SerializeField] float zoomTransformSpeed;
-        [SerializeField] Vector2Int scrollLimits;
+        [SerializeField] Vector2 scrollLimits;
         bool movementOn;
         static CameraControl instance;
         void Awake() {
             instance = this;
             cam = GetComponent<Camera>();
+            camTransform = transform;
             SetCameraMovementState(true);
         }
         void OnEnable() {
@@ -26,11 +28,12 @@ namespace General {
         void OnScroll(float scrollDelta, Vector2 direction) {
             if (!movementOn) return;
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollDelta * zoomSpeed, scrollLimits.x, scrollLimits.y);
-            if (scrollDelta > 0) cam.transform.position += new Vector3(direction.x, direction.y, 0) * scrollDelta * zoomTransformSpeed;
+            OnDrag(new Vector2(direction.x, direction.y) * scrollDelta * zoomTransformSpeed); 
         }
         void OnDrag(Vector2 dragDelta) {
             if (!movementOn) return;
-            cam.transform.position += new Vector3(dragDelta.x, dragDelta.y, 0);
+            Vector3 position = camTransform.position + new Vector3(dragDelta.x, dragDelta.y);
+            camTransform.position = position;
         }
     }
 }

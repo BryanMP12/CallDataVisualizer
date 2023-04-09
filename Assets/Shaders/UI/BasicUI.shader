@@ -14,15 +14,6 @@
 
     SubShader
     {
-        Tags
-        {
-            "Queue"="Transparent"
-            "IgnoreProjector"="True"
-            "RenderType"="Transparent"
-            "PreviewType"="Plane"
-            "CanUseSpriteAtlas"="True"
-        }
-
         Stencil
         {
             Ref [_Stencil]

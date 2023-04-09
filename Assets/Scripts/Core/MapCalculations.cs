@@ -14,15 +14,11 @@ namespace Core {
         static double acos(double val) => Math.Acos(val);
         static double sin(double val) => Math.Sin(val);
         static double cos(double val) => Math.Cos(val);
-        public static double[] CalculateDistance(double[] bbox) {
-            double diagonal, left, right, bottom, top, middleHorizontal;
-            diagonal = MapLatLonDistance(bbox[0], bbox[1], bbox[2], bbox[3]);
-            left = MapLatLonDistance(bbox[0], bbox[1], bbox[0], bbox[3]);
-            right = MapLatLonDistance(bbox[2], bbox[1], bbox[2], bbox[3]);
-            bottom = MapLatLonDistance(bbox[0], bbox[1], bbox[2], bbox[1]);
-            top = MapLatLonDistance(bbox[0], bbox[3], bbox[2], bbox[3]);
-            middleHorizontal = (top + bottom) / 2;
-            return new double[2] {middleHorizontal, left};
+        public static void CalculateDistance(double lon1, double lat1, double lon2, double lat2, out double width, out double height) {
+            height = MapLatLonDistance(lon1, lat1, lon1, lat2);
+            double bottom = MapLatLonDistance(lon1, lat1, lon2, lat1);
+            double top = MapLatLonDistance(lon1, lat2, lon2, lat2);
+            width = (top + bottom) / 2;
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Managers {
         void Awake() => filterDisplay = GetComponent<FilterDisplay>();
         void OnEnable() => PointsHolder.DataSet += OnDataSet;
         void OnDisable() => PointsHolder.DataSet -= OnDataSet;
+        public bool PointIsValid(Point p) =>
+            descriptionsToRender[p.DescriptionIndex] &&
+            (!p.OfficerInitiated && renderNonOfficerInitiated || p.OfficerInitiated && renderOfficerInitiated) &&
+            renderPriority[p.Priority];
+        public bool PointIsValid(int p) => PointIsValid(PointsHolder.Points[p]);
         void OnDataSet() {
             descriptionsToRender = new bool[PointsHolder.Descriptions.Length];
             filterDisplay.SetCount(PointsHolder.TotalPointCount, PointsHolder.NonOfficerInitiatedCount, PointsHolder.OfficerInitiatedCount, PointsHolder.PriorityCounts);
@@ -83,7 +88,6 @@ namespace Managers {
             filterDisplay.SortReps(priorityOrderIndex[priority] == 0 ? ByPriorityCount[priority] : ByPriorityRatio[priority]);
             return priorityOrderIndex[priority] + 1;
         }
-        
         readonly Comparison<FilterElementRep> ByAlphabetical = (x, y) => string.CompareOrdinal(x.Name, y.Name);
         readonly Comparison<FilterElementRep> ByCount = (x, y) => -x.TotalCount.CompareTo(y.TotalCount);
         readonly Comparison<FilterElementRep> ByNonOfficerCount = (x, y) => -x.NonOfficerInitiatedCount().CompareTo(y.NonOfficerInitiatedCount());
