@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Core.Points;
 using Core.Render;
 using UI.FilterGallery;
@@ -14,7 +15,8 @@ namespace Managers {
         void Awake() => filterDisplay = GetComponent<FilterDisplay>();
         void OnEnable() => PointsHolder.DataSet += OnDataSet;
         void OnDisable() => PointsHolder.DataSet -= OnDataSet;
-        public bool PointIsValid(Point p) =>
+        public static event Action FilterChanged;
+        bool PointIsValid(Point p) =>
             descriptionsToRender[p.DescriptionIndex] &&
             (!p.OfficerInitiated && renderNonOfficerInitiated || p.OfficerInitiated && renderOfficerInitiated) &&
             renderPriority[p.Priority];
@@ -33,7 +35,7 @@ namespace Managers {
                 priorityToggleFunctions[i] = () => TogglePriority(index);
             }
             filterDisplay.InitializeToggles(ToggleNonOfficerInitiated, ToggleOfficerInitiated, priorityToggleFunctions);
-            Func<int>[] orderPriorityFunctions = new Func<int>[6];
+            Action[] orderPriorityFunctions = new Action[6];
             for (int i = 0; i < 6; i++) {
                 int index = i;
                 orderPriorityFunctions[i] = () => OrderPriority(index);
@@ -43,72 +45,53 @@ namespace Managers {
         //Toggle
         bool ToggleNonOfficerInitiated() {
             renderNonOfficerInitiated = !renderNonOfficerInitiated;
-            RendererVariableToggle.SetNonOfficerInitiatedToRender(renderNonOfficerInitiated);
+            PointRenderBuffer.SetNonOfficerInitiatedToRender(renderNonOfficerInitiated);
+            FilterChanged?.Invoke();
             return renderNonOfficerInitiated;
         }
         bool ToggleOfficerInitiated() {
             renderOfficerInitiated = !renderOfficerInitiated;
-            RendererVariableToggle.SetOfficerInitiatedToRender(renderOfficerInitiated);
+            PointRenderBuffer.SetOfficerInitiatedToRender(renderOfficerInitiated);
+            FilterChanged?.Invoke();
             return renderOfficerInitiated;
         }
         bool TogglePriority(int index) {
             renderPriority[index] = !renderPriority[index];
-            RendererVariableToggle.SetPrioritiesToRender(renderPriority);
+            PointRenderBuffer.SetPrioritiesToRender(renderPriority);
+            FilterChanged?.Invoke();
             return renderPriority[index];
         }
         //Comparison
-        int OrderName() {
+        void OrderName() {
             filterDisplay.ResetAllOrderButtonVisuals();
             filterDisplay.SortReps(ByAlphabetical);
-            return 1;
         }
-        int OrderCount() {
+        void OrderCount() {
             filterDisplay.ResetAllOrderButtonVisuals();
             filterDisplay.SortReps(ByCount);
-            return 1;
         }
-        int nonOfficerOrderIndex;
-        int OrderNonOfficer() {
+        void OrderNonOfficer() {
             filterDisplay.ResetAllOrderButtonVisuals();
-            nonOfficerOrderIndex = (nonOfficerOrderIndex + 1) % 2;
-            filterDisplay.SortReps(nonOfficerOrderIndex == 0 ? ByNonOfficerCount : ByNonOfficerRatio);
-            return nonOfficerOrderIndex + 1;
+            filterDisplay.SortReps(ByNonOfficerCount);
         }
-        int officerOrderIndex;
-        int OrderOfficer() {
+        void OrderOfficer() {
             filterDisplay.ResetAllOrderButtonVisuals();
-            officerOrderIndex = (officerOrderIndex + 1) % 2;
-            filterDisplay.SortReps(officerOrderIndex == 0 ? ByOfficerCount : ByOfficerRatio);
-            return officerOrderIndex + 1;
+            filterDisplay.SortReps(ByOfficerCount);
         }
-        readonly int[] priorityOrderIndex = new int[6];
-        int OrderPriority(int priority) {
+        void OrderPriority(int priority) {
             filterDisplay.ResetAllOrderButtonVisuals();
-            priorityOrderIndex[priority] = (priorityOrderIndex[priority] + 1) % 2;
-            filterDisplay.SortReps(priorityOrderIndex[priority] == 0 ? ByPriorityCount[priority] : ByPriorityRatio[priority]);
-            return priorityOrderIndex[priority] + 1;
+            filterDisplay.SortReps(ByPriorityCount[priority]);
         }
         readonly Comparison<FilterElementRep> ByAlphabetical = (x, y) => string.CompareOrdinal(x.Name, y.Name);
         readonly Comparison<FilterElementRep> ByCount = (x, y) => -x.TotalCount.CompareTo(y.TotalCount);
         readonly Comparison<FilterElementRep> ByNonOfficerCount = (x, y) => -x.NonOfficerInitiatedCount().CompareTo(y.NonOfficerInitiatedCount());
-        readonly Comparison<FilterElementRep> ByNonOfficerRatio = (x, y) => -x.NonOfficerInitiatedRatio.CompareTo(y.NonOfficerInitiatedRatio);
         readonly Comparison<FilterElementRep> ByOfficerCount = (x, y) => -x.OfficerInitiatedCount.CompareTo(y.OfficerInitiatedCount);
-        readonly Comparison<FilterElementRep> ByOfficerRatio = (x, y) => -x.OfficerInitiatedRatio.CompareTo(y.OfficerInitiatedRatio);
         readonly Comparison<FilterElementRep>[] ByPriorityCount = PriorityCountComparison();
-        readonly Comparison<FilterElementRep>[] ByPriorityRatio = PriorityRatioComparison();
         static Comparison<FilterElementRep>[] PriorityCountComparison() {
             Comparison<FilterElementRep>[] comparisons = new Comparison<FilterElementRep>[6];
             for (int i = 0; i < 6; i++) {
                 int index = i;
                 comparisons[i] = (x, y) => -x.PriorityCount[index].CompareTo(y.PriorityCount[index]);
-            }
-            return comparisons;
-        }
-        static Comparison<FilterElementRep>[] PriorityRatioComparison() {
-            Comparison<FilterElementRep>[] comparisons = new Comparison<FilterElementRep>[6];
-            for (int i = 0; i < 6; i++) {
-                int index = i;
-                comparisons[i] = (x, y) => -x.PriorityRatio(index).CompareTo(y.PriorityRatio(index));
             }
             return comparisons;
         }
@@ -118,7 +101,15 @@ namespace Managers {
             new FilterElementRep(dc.Name, dc.TotalCount, dc.OfficerInitiatedCount, dc.PriorityCount, delegate(bool b) { UpdateDescriptionToRender(index, b); });
         void UpdateDescriptionToRender(int index, bool state) {
             descriptionsToRender[index] = state;
-            RendererVariableToggle.SetDescriptionsToRender(descriptionsToRender);
+            if (delayedUpdate == null) delayedUpdate = StartCoroutine(DelayedDescriptionUpdate());
+        }
+        //This is a bandage solution. Not elegant but works. Used to prevent buffer being updated twice in one tick
+        Coroutine delayedUpdate;
+        IEnumerator DelayedDescriptionUpdate() {
+            yield return null;
+            PointRenderBuffer.SetDescriptionsToRender(descriptionsToRender);
+            delayedUpdate = null;
+            FilterChanged?.Invoke();
         }
         //
     }

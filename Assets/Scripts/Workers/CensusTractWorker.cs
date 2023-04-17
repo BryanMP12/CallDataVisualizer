@@ -1,17 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core;
 using Core.CensusTracts;
 using Core.Render.Tracts;
 using UnityEngine;
+using System.Linq;
 
 namespace Workers {
     public class CensusTractWorker : MonoBehaviour {
         [SerializeField] LineRenderer borderOutline;
         [SerializeField] MeshFilter filter;
         [SerializeField] MeshCollider meshCollider;
+        static readonly Gradient WhiteGradient = new Gradient() {
+            colorKeys = new GradientColorKey[1] {new GradientColorKey(Color.white, 0)},
+            alphaKeys = new GradientAlphaKey[1] {new GradientAlphaKey(1, 0)},
+            mode = GradientMode.Fixed
+        };
+        static readonly Gradient RedGradient = new Gradient() {
+            colorKeys = new GradientColorKey[1] {new GradientColorKey(Color.red, 0)},
+            alphaKeys = new GradientAlphaKey[1] {new GradientAlphaKey(1, 0)},
+            mode = GradientMode.Fixed
+        };
         public int TractIndex { get; private set; }
-        public readonly List<int> Points = new List<int>();
-        static int MaxPointCount;
+        readonly List<int> Points = new List<int>();
         public void Initialize(CensusTract tract, int index) {
             TractIndex = index;
             borderOutline.positionCount = tract.Shape.Count;
@@ -23,13 +34,22 @@ namespace Workers {
             filter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
         }
-        public void AddPoint(int pointIndex) {
-            Points.Add(pointIndex);
+        public void AddPoint(int pointIndex) { Points.Add(pointIndex); }
+        public void Select() {
+            borderOutline.sortingOrder = 1;
+            borderOutline.colorGradient = RedGradient;
+            borderOutline.startWidth = 1;
         }
-        public Color CountColor() {
-            Color c = Color.Lerp(Color.green, Color.red, Points.Count / (float) MaxPointCount);
-            c.a = 0.2f;
-            return c;
+        public void Deselect() {
+            borderOutline.sortingOrder = 0;
+            borderOutline.colorGradient = WhiteGradient;
+            borderOutline.startWidth = 0.5f;
+        }
+        public int PointCount() => Points.Count;
+        public int FilteredPointCount(Func<int, bool> pointFilter) { return Points.Count == 0 ? 0 : Points.Count(pointFilter); }
+        public float FilteredPointRatio(Func<int, bool> pointFilter) {
+            if (Points.Count == 0) return 0;
+            return FilteredPointCount(pointFilter) / (float) PointCount();
         }
     }
 }

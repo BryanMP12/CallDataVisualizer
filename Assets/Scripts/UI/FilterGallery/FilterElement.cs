@@ -15,10 +15,10 @@ namespace UI.FilterGallery {
             switchButton.SetAction(SwitchState);
             rect = GetComponent<RectTransform>();
         }
-        void SwitchState() {
-            if (filterRep == null) return;
-            switchButton.SetVisual(filterRep.Switch());
+        public void UpdateVisual(bool val) {
+            switchButton.SetVisual(val);
         }
+        void SwitchState() => filterRep?.Switch();
         public void SetPosition(float position) => rect.anchoredPosition = new Vector2(0, position);
         public void SetVisualState(bool state) {
             //Is this needed since I have stencil draw?

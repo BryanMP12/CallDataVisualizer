@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using General;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
     public class ToolbarAddonManager : MonoBehaviour {
-        [SerializeField] List<Addon> toolBarAddons;
+        [SerializeField] List<Addon> leftToolBarAddons;
+        [SerializeField] List<Addon> rightToolBarAddons;
         void Start() {
-            for (int i = 0; i < toolBarAddons.Count; i++) {
-                Addon a = toolBarAddons[i];
+            InitializeAddonList(leftToolBarAddons);
+            InitializeAddonList(rightToolBarAddons);
+        }
+        static void InitializeAddonList(IReadOnlyList<Addon> addonList) {
+            for (int i = 0; i < addonList.Count; i++) {
+                Addon a = addonList[i];
                 a.Initialize();
                 int index = i;
-                a.button.onClick.AddListener(delegate { ToggleAddon(index); });
+                a.button.onClick.AddListener(delegate { ToggleAddon(addonList, index); });
             }
         }
-        void ToggleAddon(int index) {
-            for (int i = 0; i < toolBarAddons.Count; i++) {
+        static void ToggleAddon(IReadOnlyList<Addon> addonList, int index) {
+            for (int i = 0; i < addonList.Count; i++) {
                 if (index == i) {
-                    if (toolBarAddons[i].addon.Enabled) {
-                        toolBarAddons[i].addon.DisableDisplay();
-                        CameraControl.SetCameraMovementState(true);
-                    } else {
-                        toolBarAddons[i].addon.EnableDisplay();
-                        CameraControl.SetCameraMovementState(false);
-                    }
-                } else toolBarAddons[i].addon.DisableDisplay();
+                    if (addonList[i].addon.Enabled) addonList[i].addon.DisableDisplay();
+                     else addonList[i].addon.EnableDisplay();
+                } else addonList[i].addon.DisableDisplay();
             }
         }
         [Serializable]

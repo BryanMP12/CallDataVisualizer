@@ -23,18 +23,23 @@ namespace Core.CensusTracts {
         public int TotalHousingUnits; //H0010001
         public int OccupiedHousingUnits; //H0010002
         public int VacantHousingUnits; //H0010003
-        public int TotalPopulationInGroupQuarters; //P0050001
-        //
-        public int InstitutionalizedPopulation; //P0050002
-        public int CorrectionalFacilitiesForAdults; //P0050003
-        public int JuvenileFacilities; //P0050004
-        public int NursingFacilities; //P0050005
-        public int OtherInstitutionalFacilities; //P0050006
-        //
-        public int NonInstitutionalizedPopulation; //P0050007
-        public int CollegeUniversityStudentHousing; //P0050008
-        public int MilitaryQuarters; //P0050009
-        public int OtherNonInstitutionalizedFacilities; //P0050010
+        public float OneRaceRatio() => HandleZeroDivision(OneRacePopulation, TotalPopulation);
+        public float WhiteRatio() => HandleZeroDivision(OneRaceWhite, TotalPopulation);
+        public float BlackRatio() => HandleZeroDivision(OneRaceBlack, TotalPopulation);
+        public float AmericanIndianRatio() => HandleZeroDivision(OneRaceAmericanIndian, TotalPopulation);
+        public float AsianRatio() => HandleZeroDivision(OneRaceAsian, TotalPopulation);
+        public float NativeHawaiianRatio() => HandleZeroDivision(OneRaceNativeHawaiian, TotalPopulation);
+        public float OtherRaceRatio() => HandleZeroDivision(OneRaceOther, TotalPopulation);
+        public float TwoOrMoreRatio() => HandleZeroDivision(TwoOrMoreRacePopulation, TotalPopulation);
+        public float HispanicOrLatinoRatio() => HandleZeroDivision(HispanicOrLatinoPopulation, TotalPopulation);
+        public float NotHispanicOrLatinoRatio() => HandleZeroDivision(NotHispanicOrLatinoPopulation, TotalPopulation);
+        public float EighteenYearsAndOverRatio() => HandleZeroDivision(EighteenYearsAndOverPopulation, TotalPopulation);
+        public float OccupiedHousingUnitsRatio() => HandleZeroDivision(OccupiedHousingUnits, TotalHousingUnits);
+        public float VacantHousingUnitsRatio() => HandleZeroDivision(VacantHousingUnits, TotalHousingUnits);
+        float HandleZeroDivision(int a, int b) {
+            if (b == 0) return 0;
+            return a / (float) b;
+        }
         public CensusTractData(List<int> borders, Models.Node node) {
             BorderingCensuses = borders.ToArray();
             TotalPopulation = node.P0010001;
@@ -53,18 +58,6 @@ namespace Core.CensusTracts {
             TotalHousingUnits = node.H0010001;
             OccupiedHousingUnits = node.H0010002;
             VacantHousingUnits = node.H0010003;
-            TotalPopulationInGroupQuarters = node.P0050001;
-            //
-            InstitutionalizedPopulation = node.P0050002;
-            CorrectionalFacilitiesForAdults = node.P0050003;
-            JuvenileFacilities = node.P0050004;
-            NursingFacilities = node.P0050005;
-            OtherInstitutionalFacilities = node.P0050006;
-            //
-            NonInstitutionalizedPopulation = node.P0050007;
-            CollegeUniversityStudentHousing = node.P0050008;
-            MilitaryQuarters = node.P0050009;
-            OtherNonInstitutionalizedFacilities = node.P0050010;
         }
     }
 }

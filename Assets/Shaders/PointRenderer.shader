@@ -1,5 +1,9 @@
 ﻿Shader "Map/PointRenderer"
 {
+    Properties
+    {
+        _Circle ("Circle", 2D) = "white" {}
+    }
     SubShader
     {
         Blend SrcAlpha OneMinusSrcAlpha
@@ -19,11 +23,13 @@
             struct appdata_t
             {
                 float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
             };
 
             struct v2f
             {
                 float4 vertex : SV_POSITION;
+                float2 uv : TEXCOORD0;
                 fixed4 color : COLOR;
             };
 
@@ -35,6 +41,8 @@
                 int officer_initiated;
             };
 
+
+            sampler2D _Circle;
             StructuredBuffer<Point> _Points;
             float4 _ColorArray[6];
             //0 if no draw, 1 if draw
@@ -57,12 +65,13 @@
                     && (!officer_initiated && RenderNonOfficerInitiated || officer_initiated && RenderOfficerInitiated)
                     && _VarsToRender[priority_index] == 1;
                 o.color.a = render ? 1 : 0;
+                o.uv = i.uv;
                 return o;
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
-                return i.color;
+                return tex2D(_Circle, i.uv).a * i.color;
             }
             ENDCG
         }

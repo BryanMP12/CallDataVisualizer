@@ -7,6 +7,7 @@ namespace General {
         [SerializeField] float zoomSpeed;
         [SerializeField] float zoomTransformSpeed;
         [SerializeField] Vector2 scrollLimits;
+        [SerializeField] AnimationCurve zoomCurve;
         bool movementOn;
         static CameraControl instance;
         void Awake() {
@@ -16,18 +17,20 @@ namespace General {
             SetCameraMovementState(true);
         }
         void OnEnable() {
-            MouseInput.ScrollDelta += OnScroll;
-            MouseInput.DragDelta += OnDrag;
+            InputManager.ScrollDeltaNone += OnScroll;
+            InputManager.DragDelta += OnDrag;
         }
         void OnDisable() {
-            MouseInput.ScrollDelta -= OnScroll;
-            MouseInput.DragDelta -= OnDrag;
+            InputManager.ScrollDeltaNone -= OnScroll;
+            InputManager.DragDelta -= OnDrag;
         }
         public static bool SetCameraMovementState(bool state) => instance.movementOn = state;
         public static bool ToggleCameraMovementState() => instance.movementOn = !instance.movementOn;
+        float scrollRatio = 1;
         void OnScroll(float scrollDelta, Vector2 direction) {
             if (!movementOn) return;
-            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scrollDelta * zoomSpeed, scrollLimits.x, scrollLimits.y);
+            scrollRatio = Mathf.Clamp01(scrollRatio - scrollDelta * zoomSpeed);
+            cam.orthographicSize = Mathf.Lerp(scrollLimits.x, scrollLimits.y, zoomCurve.Evaluate(scrollRatio));
             OnDrag(new Vector2(direction.x, direction.y) * scrollDelta * zoomTransformSpeed); 
         }
         void OnDrag(Vector2 dragDelta) {

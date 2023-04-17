@@ -10,20 +10,14 @@ namespace UI.FilterGallery {
         public readonly int OfficerInitiatedCount;
         public readonly int[] PriorityCount;
         public int NonOfficerInitiatedCount() => TotalCount - OfficerInitiatedCount;
-        //Ratio
-        public float NonOfficerInitiatedRatio => (float) NonOfficerInitiatedCount() / TotalCount;
-        public float OfficerInitiatedRatio => (float) OfficerInitiatedCount / TotalCount;
-        public float PriorityRatio(int priority) => (float) PriorityCount[priority] / TotalCount;
-        //
-        //
         readonly Action<bool> SwitchButtonClicked;
         public bool SwitchedOn = true;
         public FilterElementRep(string n, int tc, int oic, int[] pc, Action<bool> sbc) =>
             (Name, TotalCount, OfficerInitiatedCount, PriorityCount, SwitchButtonClicked) = (n, tc, oic, pc, sbc);
-        public bool Switch() {
+        public void Switch() {
             SwitchedOn = !SwitchedOn;
             SwitchButtonClicked?.Invoke(SwitchedOn);
-            return SwitchedOn;
+            ((FilterElement)poolElement)?.UpdateVisual(SwitchedOn);
         }
         //Dimensions
         static Vector2 RectLimits;

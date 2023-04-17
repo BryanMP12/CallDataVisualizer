@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.RawDataInterpreter.CallData;
+using UnityEngine;
 
 namespace Core.Points {
     [Serializable]
@@ -48,6 +49,10 @@ namespace Core.Points {
             int pointCount = 0;
             for (int i = 0; i < dataList.Count; i++) {
                 List<APIModels.Feature> features = dataList[i].features;
+                if (features == null) {
+                    Debug.LogError("Features is null. This should not be the case");
+                    continue;
+                }
                 for (int j = 0; j < features.Count; j++) {
                     sph.Points[pointCount] = sph.DeserializePropertiesToPoint(features[j].attributes, possibleDescriptions);
                     pointCount++;

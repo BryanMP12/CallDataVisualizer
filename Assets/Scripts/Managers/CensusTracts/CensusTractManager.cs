@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core;
 using Core.CensusTracts;
 using Core.Points;
 using General;
+using UI.CensusTracts;
 using UnityEngine;
 using Workers;
 
@@ -10,38 +13,94 @@ namespace Managers.CensusTracts {
     public partial class CensusTractManager : MonoBehaviour {
         [SerializeField] CensusTractHolder holder;
         [SerializeField] FilterManager filterManager;
+        [SerializeField] TractViewer tractViewer;
         [SerializeField] Transform censusTractParent;
         [SerializeField] GameObject censusTractPrefab;
         [SerializeField] Transform adjacencyLineParent;
         [SerializeField] GameObject adjacencyLinePrefab;
         [SerializeField] Material censusTractMaterial;
         readonly List<CensusTractWorker> censusTractWorkers = new List<CensusTractWorker>();
+        List<CensusTract> Tracts => holder.CensusTracts; //Bandage used here just to make code shorter
         void Awake() {
             CreateTracts();
             DrawDigraph();
+            censusTractMaterial.SetColor(SPID._ColorLow, Color.clear);
+            censusTractMaterial.SetColor(SPID._ColorHigh, Color.clear);
+        }
+        void Start() {
+            int totalPop = 0,
+                oneRacePop = 0,
+                oneRaceW = 0,
+                oneRaceB = 0,
+                oneRaceAI = 0,
+                oneRaceA = 0,
+                oneRaceNH = 0,
+                oneRaceO = 0,
+                twoOrMoreRacePop = 0,
+                hOrLatinPop = 0,
+                notHOrLatinPop = 0,
+                eighteenOverPop = 0,
+                totalHouse = 0,
+                occupiedHouse = 0,
+                vacantHouse = 0;
+            for (int i = 0; i < Tracts.Count; i++) {
+                CensusTract censusTract = Tracts[i];
+                CensusTractData d = censusTract.Data;
+                totalPop += d.TotalPopulation;
+                oneRacePop += d.OneRacePopulation;
+                oneRaceW += d.OneRaceWhite;
+                oneRaceB += d.OneRaceBlack;
+                oneRaceAI += d.OneRaceAmericanIndian;
+                oneRaceA += d.OneRaceAsian;
+                oneRaceNH += d.OneRaceNativeHawaiian;
+                oneRaceO += d.OneRaceOther;
+                twoOrMoreRacePop += d.TwoOrMoreRacePopulation;
+                hOrLatinPop += d.HispanicOrLatinoPopulation;
+                notHOrLatinPop += d.NotHispanicOrLatinoPopulation;
+                eighteenOverPop += d.EighteenYearsAndOverPopulation;
+                totalHouse += d.TotalHousingUnits;
+                occupiedHouse += d.OccupiedHousingUnits;
+                vacantHouse += d.VacantHousingUnits;
+            }
+            tractViewer.InitializeTotalAndAverageNumbers(Tracts.Count, totalPop, oneRacePop, oneRaceW, oneRaceB, oneRaceAI, oneRaceA, oneRaceNH, oneRaceO,
+                twoOrMoreRacePop, hOrLatinPop, notHOrLatinPop, eighteenOverPop, totalHouse, occupiedHouse, vacantHouse);
+            tractViewer.SetTractTitleClickActions(ToggleFunc(TogglePopulationTotal), ToggleFunc(ToggleOneRacePopulation), ToggleFunc(ToggleWhitePopulation),
+                ToggleFunc(ToggleBlackPopulation), ToggleFunc(ToggleAmericanIndianPopulation), ToggleFunc(ToggleAsianPopulation), ToggleFunc(ToggleNativeHawaiianPopulation),
+                ToggleFunc(ToggleOtherPopulation), ToggleFunc(ToggleTwoRacePopulation), ToggleFunc(ToggleHispanicOrLatinoPopulation),
+                ToggleFunc(ToggleNotHispanicOrLatinoPopulation), ToggleFunc(ToggleEighteenYearsPopulation), ToggleFunc(ToggleHousingPopulation),
+                ToggleFunc(ToggleOccupiedPopulation), ToggleFunc(ToggleVacantPopulation), ToggleFunc(TogglePoints), ToggleFunc(ToggleFilteredPoints)
+            );
         }
         void OnEnable() {
-            //MouseInput.MouseClick += FindIntersectingCensusTract;
+            InputManager.ClickZ += OnClickNone;
+            FilterManager.FilterChanged += OnFilterChanged;
             PointsHolder.DataSet += OnDataSet;
         }
         void OnDisable() {
-            //MouseInput.MouseClick -= FindIntersectingCensusTract;
+            InputManager.ClickZ -= OnClickNone;
+            FilterManager.FilterChanged -= OnFilterChanged;
             PointsHolder.DataSet -= OnDataSet;
         }
+        void OnFilterChanged() {
+            int filterCount = censusTractWorkers.Sum(worker => worker.FilteredPointCount(filterManager.PointIsValid));
+            tractViewer.SetFilteredPointTotalAndAverage(censusTractWorkers.Count, filterCount);
+        }
+        float[] ratios;
         void CreateTracts() {
-            for (int i = 0; i < holder.CensusTracts.Count; i++) {
+            for (int i = 0; i < Tracts.Count; i++) {
                 CensusTractWorker worker = Instantiate(censusTractPrefab, censusTractParent).GetComponent<CensusTractWorker>();
                 censusTractWorkers.Add(worker);
-                worker.Initialize(holder.CensusTracts[i], i);
+                worker.Initialize(Tracts[i], i);
             }
+            ratios = new float[censusTractWorkers.Count];
         }
         void DrawDigraph() {
-            for (int i = 0; i < holder.CensusTracts.Count; i++) {
-                CensusTract tract = holder.CensusTracts[i];
+            for (int i = 0; i < Tracts.Count; i++) {
+                CensusTract tract = Tracts[i];
                 for (int j = 0; j < tract.Data.BorderingCensuses.Length; j++) {
                     int otherIndex = tract.Data.BorderingCensuses[j];
                     if (otherIndex > i) continue;
-                    CensusTract otherTract = holder.CensusTracts[otherIndex];
+                    CensusTract otherTract = Tracts[otherIndex];
                     LineRenderer lr = Instantiate(adjacencyLinePrefab, adjacencyLineParent).GetComponent<LineRenderer>();
                     lr.positionCount = 2;
                     lr.SetPosition(0, Vec3(Dims.CoordToPort(tract.Centroid.Lon, tract.Centroid.Lat), -3));
@@ -52,7 +111,8 @@ namespace Managers.CensusTracts {
         static Vector3 Vec3(Vector2 xy, float z) => new Vector3(xy.x, xy.y, z);
         void OnDataSet() {
             AssignPoints();
-            SetCountColors();
+            int pointCount = censusTractWorkers.Sum(worker => worker.PointCount());
+            tractViewer.InitializePointTotalAndAverage(Tracts.Count, pointCount);
         }
         void AssignPoints() {
             for (int i = 0; i < PointsHolder.Points.Length; i++) {
@@ -61,10 +121,71 @@ namespace Managers.CensusTracts {
                 worker.AddPoint(i);
             }
         }
-        void SetCountColors() {
-            Color[] colors = new Color[censusTractWorkers.Count];
-            for (int i = 0; i < censusTractWorkers.Count; i++) colors[i] = censusTractWorkers[i].CountColor();
-            censusTractMaterial.SetColorArray(SPID._ColorArray, colors);
+        void SetColors(Color low, Color high) {
+            censusTractMaterial.SetColor(SPID._ColorLow, low);
+            censusTractMaterial.SetColor(SPID._ColorHigh, high);
         }
+        public void SetCountColors(CensusDataCount type) {
+            SetColors(new Color(1, 1, 1, 0.1f), new Color(0.16f, 0.58f, 0.89f, 0.1f));
+            Func<CensusTractWorker, float> func = GetCountFunc(type);
+            float max = censusTractWorkers.Select(func).Max();
+            for (int i = 0; i < censusTractWorkers.Count; i++) ratios[i] = func(censusTractWorkers[i]) / max;
+            censusTractMaterial.SetFloatArray(SPID._RatioArray, ratios);
+            tractViewer.SetMoranValue(-1);
+        }
+        public void SetRatioColors(CensusDataRatio type) {
+            SetColors(new Color(1, 1, 1, 0.1f), new Color(0.16f, 0.58f, 0.89f, 0.1f));
+            Func<CensusTractWorker, float> func = GetRatioFunc(type);
+            for (int i = 0; i < censusTractWorkers.Count; i++) ratios[i] = func(censusTractWorkers[i]);
+            censusTractMaterial.SetFloatArray(SPID._RatioArray, ratios);
+            tractViewer.SetMoranValue(Moran(censusTractWorkers, Tracts, func));
+        }
+        public enum CensusDataCount {
+            TotalPopulation, OneRace, White, Black, AmericanIndian, Asian, NativeHawaiian, OtherRace, TwoOrMoreRace, HispanicOrLatino,
+            NotHispanicOrLatino, EighteenYearsAndOver, HousingUnits, OccupiedUnits, VacantUnits, Points, FilteredPoints
+        }
+        public enum CensusDataRatio {
+            OneRace, White, Black, AmericanIndian, Asian, NativeHawaiian, OtherRace, TwoOrMoreRace, HispanicOrLatino, NotHispanicOrLatino, EighteenYearsAndOver, OccupiedUnits,
+            VacantUnits, FilteredPoints
+        }
+        Func<CensusTractWorker, float> GetCountFunc(CensusDataCount type) =>
+            type switch {
+                CensusDataCount.TotalPopulation      => w => Tracts[w.TractIndex].Data.TotalPopulation,
+                CensusDataCount.OneRace              => w => Tracts[w.TractIndex].Data.OneRacePopulation,
+                CensusDataCount.White                => w => Tracts[w.TractIndex].Data.OneRaceWhite,
+                CensusDataCount.Black                => w => Tracts[w.TractIndex].Data.OneRaceBlack,
+                CensusDataCount.AmericanIndian       => w => Tracts[w.TractIndex].Data.OneRaceAmericanIndian,
+                CensusDataCount.Asian                => w => Tracts[w.TractIndex].Data.OneRaceAsian,
+                CensusDataCount.NativeHawaiian       => w => Tracts[w.TractIndex].Data.OneRaceNativeHawaiian,
+                CensusDataCount.OtherRace            => w => Tracts[w.TractIndex].Data.OneRaceOther,
+                CensusDataCount.TwoOrMoreRace        => w => Tracts[w.TractIndex].Data.TwoOrMoreRacePopulation,
+                CensusDataCount.HispanicOrLatino     => w => Tracts[w.TractIndex].Data.HispanicOrLatinoPopulation,
+                CensusDataCount.NotHispanicOrLatino  => w => Tracts[w.TractIndex].Data.NotHispanicOrLatinoPopulation,
+                CensusDataCount.EighteenYearsAndOver => w => Tracts[w.TractIndex].Data.EighteenYearsAndOverPopulation,
+                CensusDataCount.HousingUnits         => w => Tracts[w.TractIndex].Data.TotalHousingUnits,
+                CensusDataCount.OccupiedUnits        => w => Tracts[w.TractIndex].Data.OccupiedHousingUnits,
+                CensusDataCount.VacantUnits          => w => Tracts[w.TractIndex].Data.VacantHousingUnits,
+                CensusDataCount.Points               => w => w.PointCount(),
+                CensusDataCount.FilteredPoints       => w => w.FilteredPointCount(filterManager.PointIsValid),
+                _                                    => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+        Func<CensusTractWorker, float> GetRatioFunc(CensusDataRatio type) =>
+            type switch {
+                CensusDataRatio.OneRace              => w => Tracts[w.TractIndex].Data.OneRaceRatio(),
+                CensusDataRatio.White                => w => Tracts[w.TractIndex].Data.WhiteRatio(),
+                CensusDataRatio.Black                => w => Tracts[w.TractIndex].Data.BlackRatio(),
+                CensusDataRatio.AmericanIndian       => w => Tracts[w.TractIndex].Data.AmericanIndianRatio(),
+                CensusDataRatio.Asian                => w => Tracts[w.TractIndex].Data.AsianRatio(),
+                CensusDataRatio.NativeHawaiian       => w => Tracts[w.TractIndex].Data.NativeHawaiianRatio(),
+                CensusDataRatio.OtherRace            => w => Tracts[w.TractIndex].Data.OtherRaceRatio(),
+                CensusDataRatio.TwoOrMoreRace        => w => Tracts[w.TractIndex].Data.TwoOrMoreRatio(),
+                CensusDataRatio.HispanicOrLatino     => w => Tracts[w.TractIndex].Data.HispanicOrLatinoRatio(),
+                CensusDataRatio.NotHispanicOrLatino  => w => Tracts[w.TractIndex].Data.NotHispanicOrLatinoRatio(),
+                CensusDataRatio.EighteenYearsAndOver => w => Tracts[w.TractIndex].Data.EighteenYearsAndOverRatio(),
+                CensusDataRatio.OccupiedUnits        => w => Tracts[w.TractIndex].Data.OccupiedHousingUnitsRatio(),
+                CensusDataRatio.VacantUnits          => w => Tracts[w.TractIndex].Data.VacantHousingUnitsRatio(),
+                CensusDataRatio.FilteredPoints       => w => w.FilteredPointRatio(filterManager.PointIsValid),
+                _                                    => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
     }
 }

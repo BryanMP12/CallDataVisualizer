@@ -1,44 +1,47 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using Core.CensusTracts;
 using UnityEngine;
 using Workers;
 
 namespace Managers.CensusTracts {
     public partial class CensusTractManager {
-        [ContextMenu("Calculate Moran's I")]
-        public void CalculateMoranI() { Moran(censusTractWorkers, holder.CensusTracts); }
-        void Moran(List<CensusTractWorker> workers, List<CensusTract> tracts) {
+        static float Moran(IReadOnlyList<CensusTractWorker> workers, IReadOnlyList<CensusTract> tracts, Func<CensusTractWorker, float> dataRatio) {
             Debug.Log($"Workers: {workers.Count}, Tracts: {tracts.Count}"); //Counts should be same
             //n = Census Tract Count
             //m = Edge Count
             int n = tracts.Count;
             int m = 0;
             float[] ratio = new float[tracts.Count];
+            float ratioAverage = 0;
             for (int i = 0; i < workers.Count; i++) {
                 CensusTractWorker worker = workers[i];
-                int totalPointCount = worker.Points.Count;
-                int validPointCount = worker.Points.Count(pointIndex => filterManager.PointIsValid(pointIndex));
-                ratio[i] = validPointCount / (float) totalPointCount;
+                ratio[i] = dataRatio(worker);
+                ratioAverage += ratio[i];
             }
-            float ratioAverage = ratio.Sum() / ratio.Length;
+            Debug.Log($"Ratio Total: {ratioAverage}, Ratio Count: {ratio.Length}");
+            ratioAverage /= ratio.Length;
             for (int i = 0; i < ratio.Length; i++) ratio[i] -= ratioAverage;
-            for (int i = 0; i < ratio.Length; i++) Debug.Log(ratio[i]);
+            // for (int i = 0; i < ratio.Length; i++) Debug.Log(ratio[i]);
 
             float adjacencySum = 0;
-            for (int i = 0; i < workers.Count; i++) {
-                CensusTractWorker worker = workers[i];
-                for (int j = 0; j < worker.Points.Count; j++) {
-                    if (i < worker.Points[j]) continue;
+            float squareSum = 0;
+            for (int i = 0; i < tracts.Count; i++) {
+                CensusTract tract = tracts[i];
+                squareSum += ratio[i] * ratio[i];
+                for (int j = 0; j < tract.Data.BorderingCensuses.Length; j++) {
+                    if (i < tract.Data.BorderingCensuses[j]) continue;
                     m++;
-                    adjacencySum += ratio[i] * ratio[worker.Points[j]];
+                    adjacencySum += ratio[i] * ratio[tract.Data.BorderingCensuses[j]];
                 }
             }
 
-            float squareSum = ratio.Sum(t => t * t);
+            Debug.Log($"CensusTractCount: {n}, EdgeCount: {m}, RatioAverage: {ratioAverage}");
+            Debug.Log($"AdjacencySum: {adjacencySum}, SquareSum: {squareSum}");
 
             float moranValue = (n / (float) m) * (adjacencySum / squareSum);
             Debug.Log($"Moran's I: {moranValue}");
+            return moranValue;
         }
     }
 }

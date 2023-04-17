@@ -5,7 +5,7 @@ namespace UI.Gallery {
         public float initialYPosition;
         float currentPosition;
         bool inUse;
-        IGalleryElement poolElement;
+        protected IGalleryElement poolElement;
         public abstract float YSize { get; }
         public abstract Vector2 PositionLimits { get; }
         public void SetYPosition(float yPos) => initialYPosition = yPos;

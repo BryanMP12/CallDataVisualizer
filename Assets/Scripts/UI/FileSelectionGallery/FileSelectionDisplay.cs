@@ -20,11 +20,11 @@ namespace UI.FileSelectionGallery {
         public void AddDownloadListener(Action download) => downloadAction = download;
         public void EnableDisplay() {
             canvas.enabled = Enabled = true;
-            MouseInput.ScrollDelta += MoveOffset;
+            InputManager.ScrollDeltaUI += MoveOffset;
         }
         public void DisableDisplay() {
             canvas.enabled = Enabled = false;
-            MouseInput.ScrollDelta -= MoveOffset;
+            InputManager.ScrollDeltaUI -= MoveOffset;
         }
     }
 }

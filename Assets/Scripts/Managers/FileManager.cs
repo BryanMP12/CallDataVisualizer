@@ -46,6 +46,7 @@ namespace Managers {
             EditorUtility.SetDirty(censusTractHolder);
 #endif
         }
+        #if UNITY_EDITOR
         [ContextMenu("DeserializeTractFile")]
         public void DeserializeTractDataFile() {
             List<(Models.Node node, List<Models.Adjacency> adjacencies)> detroitNodes = TractDataReader.ReadTractData(tractDataFilePath);
@@ -69,5 +70,6 @@ namespace Managers {
             }
             EditorUtility.SetDirty(censusTractHolder);
         }
+        #endif
     }
 }

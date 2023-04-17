@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace UI.Gallery {
@@ -11,6 +10,7 @@ namespace UI.Gallery {
         readonly Stack<IGalleryElement> AvailableElements = new Stack<IGalleryElement>();
         readonly Stack<int> ReadyIndices = new Stack<int>();
         readonly List<T> ElementReps = new List<T>();
+        protected IEnumerable<T> Reps => ElementReps;
         float GalleryHeight => parent.rect.height;
         readonly float ElementHeight = new T().YSize;
         Vector2 OffsetLimits = new Vector2(0, 0); //max, min

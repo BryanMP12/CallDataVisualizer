@@ -3,6 +3,8 @@ Shader "Map/CensusShader"
     Properties
     {
         [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
+        _ColorLow ("Color Low", Color) = (0, 0, 0, 0)
+        _ColorHigh ("Color High", Color) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -16,7 +18,9 @@ Shader "Map/CensusShader"
 
             #include "UnityCG.cginc"
 
-            float4 _ColorArray[300];
+            fixed4 _ColorLow;
+            fixed4 _ColorHigh;
+            float _RatioArray[300];
             
             struct appdata
             {
@@ -40,7 +44,7 @@ Shader "Map/CensusShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return _ColorArray[i.uv.x];
+                return lerp(_ColorLow, _ColorHigh, _RatioArray[i.uv.x]);
             }
             ENDCG
         }

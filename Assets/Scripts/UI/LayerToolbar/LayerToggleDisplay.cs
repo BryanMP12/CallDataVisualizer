@@ -3,8 +3,8 @@ using General;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.RenderLayerToolbar {
-    public class RenderDisplay : MonoBehaviour {
+namespace UI.LayerToolbar {
+    public class LayerToggleDisplay : MonoBehaviour, IAddon {
         [SerializeField] SwitchButton showPointSwitch;
         [SerializeField] Slider pointSizeSlider;
 
@@ -15,6 +15,10 @@ namespace UI.RenderLayerToolbar {
 
         [SerializeField] SwitchButton cameraSwitch;
 
+        Canvas canvas;
+        public bool Enabled { get; set; }
+        public void EnableDisplay() => canvas.enabled = Enabled = true;
+        public void DisableDisplay() => canvas.enabled = Enabled = false;
         public void InitializePointButtonAction(Func<bool> pointAction, Action<float> sliderAction) {
             showPointSwitch.SetAction(delegate { showPointSwitch.SetVisual(pointAction.Invoke()); });
             pointSizeSlider.onValueChanged.AddListener(sliderAction.Invoke);
@@ -27,6 +31,7 @@ namespace UI.RenderLayerToolbar {
         }
         void Awake() {
             cameraSwitch.SetAction(delegate { cameraSwitch.SetVisual(CameraControl.ToggleCameraMovementState()); });
+            canvas = GetComponent<Canvas>();
         }
     }
 }
