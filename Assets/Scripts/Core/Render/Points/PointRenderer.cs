@@ -9,7 +9,7 @@ namespace Core.Render.Points {
         static Bounds bounds;
         static ComputeBuffer argsBuffer;
         static readonly Color[] priorityColors = new Color[6] {
-            Color.black, Color.Lerp(Color.green, Color.red, 4 / 4f), Color.Lerp(Color.green, Color.red, 3 / 4f), Color.Lerp(Color.green, Color.red, 2 / 4f),
+            Color.white, Color.Lerp(Color.green, Color.red, 4 / 4f), Color.Lerp(Color.green, Color.red, 3 / 4f), Color.Lerp(Color.green, Color.red, 2 / 4f),
             Color.Lerp(Color.green, Color.red, 1 / 4f), Color.Lerp(Color.green, Color.red, 0 / 4f)
         };
         public static void InitializePoints(Material m) {

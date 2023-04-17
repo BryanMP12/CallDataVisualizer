@@ -1,4 +1,5 @@
-﻿using Core.Points;
+﻿using System;
+using Core.Points;
 using Core.Render;
 using Core.Render.Heatmap;
 using Core.Render.Points;
@@ -6,8 +7,8 @@ using General;
 using UI.LayerToolbar;
 using UnityEngine;
 
-namespace Managers {
-    public class RenderBufferManager : MonoBehaviour {
+namespace Managers.RenderBuffers {
+    public partial class RenderBufferManager : MonoBehaviour {
         [Header("Points")]
         //PointRenderer
         [SerializeField]
@@ -19,8 +20,10 @@ namespace Managers {
         Material heatmapMaterial;
         [SerializeField] ComputeShader computeShader;
         [SerializeField] MeshRenderer mesh;
+
         //
         [SerializeField] LayerToggleDisplay layerToggleDisplay;
+        void Awake() { InitializeSliders(); }
         void OnEnable() { PointsHolder.DataSet += OnDataSet; }
         void OnDisable() {
             PointsHolder.DataSet -= OnDataSet;
@@ -39,9 +42,7 @@ namespace Managers {
                 heatmapMaterial.SetTexture(SPID._InputTexture, heatTexture);
                 layerToggleDisplay.InitializeHeatmapButtonAction(
                     delegate { return mesh.enabled = !mesh.enabled; },
-                    HeatmapGenerator.RenderHeatmap,
-                    delegate(float f) { heatmapMaterial.SetFloat(SPID._Intensity, f); },
-                    delegate(float f) { heatmapMaterial.SetFloat(SPID._Threshold, f); });
+                    HeatmapGenerator.RenderHeatmap, ChangeIntensity, delegate(float f) { heatmapMaterial.SetFloat(SPID._Threshold, f); });
             }
             PointRenderBuffer.InitializeBuffers();
         }

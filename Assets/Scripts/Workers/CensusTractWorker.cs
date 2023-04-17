@@ -10,6 +10,7 @@ namespace Workers {
     public class CensusTractWorker : MonoBehaviour {
         [SerializeField] LineRenderer borderOutline;
         [SerializeField] MeshFilter filter;
+        [SerializeField] MeshRenderer meshRenderer;
         [SerializeField] MeshCollider meshCollider;
         static readonly Gradient WhiteGradient = new Gradient() {
             colorKeys = new GradientColorKey[1] {new GradientColorKey(Color.white, 0)},
@@ -46,6 +47,8 @@ namespace Workers {
             borderOutline.startWidth = 0.5f;
         }
         public int PointCount() => Points.Count;
+        public void SetFillRendererState(bool state) => meshRenderer.enabled = state;
+        public void SetBorderOutlineState(bool state) => borderOutline.enabled = state;
         public int FilteredPointCount(Func<int, bool> pointFilter) { return Points.Count == 0 ? 0 : Points.Count(pointFilter); }
         public float FilteredPointRatio(Func<int, bool> pointFilter) {
             if (Points.Count == 0) return 0;

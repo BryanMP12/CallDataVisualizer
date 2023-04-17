@@ -6,6 +6,7 @@ using Core.CensusTracts;
 using Core.Points;
 using General;
 using UI.CensusTracts;
+using UI.LayerToolbar;
 using UnityEngine;
 using Workers;
 
@@ -19,13 +20,32 @@ namespace Managers.CensusTracts {
         [SerializeField] Transform adjacencyLineParent;
         [SerializeField] GameObject adjacencyLinePrefab;
         [SerializeField] Material censusTractMaterial;
+        [SerializeField] LayerToggleDisplay layerToggleDisplay;
         readonly List<CensusTractWorker> censusTractWorkers = new List<CensusTractWorker>();
         List<CensusTract> Tracts => holder.CensusTracts; //Bandage used here just to make code shorter
+        bool showTractFill = true;
+        bool showTractOutline = true;
+        bool showTractDigraph = false;
         void Awake() {
             CreateTracts();
             DrawDigraph();
-            censusTractMaterial.SetColor(SPID._ColorLow, Color.clear);
-            censusTractMaterial.SetColor(SPID._ColorHigh, Color.clear);
+            layerToggleDisplay.InitializeTractButtonAction(ToggleFill, ToggleTractOutline, ToggleDigraph);
+            InitializeSliders();
+        }
+        bool ToggleFill() {
+            showTractFill = !showTractFill;
+            foreach (CensusTractWorker worker in censusTractWorkers) worker.SetFillRendererState(showTractFill);
+            return showTractFill;
+        }
+        bool ToggleTractOutline() {
+            showTractOutline = !showTractOutline;
+            foreach (CensusTractWorker worker in censusTractWorkers) worker.SetBorderOutlineState(showTractOutline);
+            return showTractOutline;
+        }
+        bool ToggleDigraph() {
+            showTractDigraph = !showTractDigraph;
+            adjacencyLineParent.gameObject.SetActive(showTractDigraph);
+            return showTractDigraph;
         }
         void Start() {
             int totalPop = 0,
@@ -121,24 +141,20 @@ namespace Managers.CensusTracts {
                 worker.AddPoint(i);
             }
         }
-        void SetColors(Color low, Color high) {
-            censusTractMaterial.SetColor(SPID._ColorLow, low);
-            censusTractMaterial.SetColor(SPID._ColorHigh, high);
-        }
-        public void SetCountColors(CensusDataCount type) {
-            SetColors(new Color(1, 1, 1, 0.1f), new Color(0.16f, 0.58f, 0.89f, 0.1f));
+        void SetCountColors(CensusDataCount type) {
             Func<CensusTractWorker, float> func = GetCountFunc(type);
             float max = censusTractWorkers.Select(func).Max();
             for (int i = 0; i < censusTractWorkers.Count; i++) ratios[i] = func(censusTractWorkers[i]) / max;
             censusTractMaterial.SetFloatArray(SPID._RatioArray, ratios);
             tractViewer.SetMoranValue(-1);
+            UpdateColorRamp(ColorRampType.Count, max);
         }
-        public void SetRatioColors(CensusDataRatio type) {
-            SetColors(new Color(1, 1, 1, 0.1f), new Color(0.16f, 0.58f, 0.89f, 0.1f));
+        void SetRatioColors(CensusDataRatio type) {
             Func<CensusTractWorker, float> func = GetRatioFunc(type);
             for (int i = 0; i < censusTractWorkers.Count; i++) ratios[i] = func(censusTractWorkers[i]);
             censusTractMaterial.SetFloatArray(SPID._RatioArray, ratios);
             tractViewer.SetMoranValue(Moran(censusTractWorkers, Tracts, func));
+            UpdateColorRamp(ColorRampType.Ratio, 1);
         }
         public enum CensusDataCount {
             TotalPopulation, OneRace, White, Black, AmericanIndian, Asian, NativeHawaiian, OtherRace, TwoOrMoreRace, HispanicOrLatino,

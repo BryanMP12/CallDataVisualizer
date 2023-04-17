@@ -8,9 +8,9 @@ namespace General {
         public static readonly int _Output = Shader.PropertyToID("_Output");
         public static readonly int _ColorArray = Shader.PropertyToID("_ColorArray");
         public static readonly int _RatioArray = Shader.PropertyToID("_RatioArray");
-        public static readonly int _ColorLow = Shader.PropertyToID("_ColorLow");
-        public static readonly int _ColorHigh = Shader.PropertyToID("_ColorHigh");
         public static readonly int _WriteDescription = Shader.PropertyToID("_WriteDescription");
+        public static readonly int _Min = Shader.PropertyToID("_Min");
+        public static readonly int _Max = Shader.PropertyToID("_Max");
         public static readonly int _RenderPriority = Shader.PropertyToID("_RenderPriority");
         public static readonly int _RenderNonOfficerInitiated = Shader.PropertyToID("_RenderNonOfficerInitiated");
         public static readonly int _RenderOfficerInitiated = Shader.PropertyToID("_RenderOfficerInitiated");

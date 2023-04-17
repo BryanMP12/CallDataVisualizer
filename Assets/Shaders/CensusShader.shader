@@ -2,9 +2,9 @@ Shader "Map/CensusShader"
 {
     Properties
     {
-        [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
-        _ColorLow ("Color Low", Color) = (0, 0, 0, 0)
-        _ColorHigh ("Color High", Color) = (0, 0, 0, 0)
+        _ColorRamp ("Color Ramp", 2D) = "white" {}
+        _Min ("Min", Range(0, 1)) = 0
+        _Max ("Max", Range(0, 1)) = 1
     }
     SubShader
     {
@@ -18,10 +18,10 @@ Shader "Map/CensusShader"
 
             #include "UnityCG.cginc"
 
-            fixed4 _ColorLow;
-            fixed4 _ColorHigh;
             float _RatioArray[300];
-            
+            sampler2D _ColorRamp;
+            float _Min, _Max;
+
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -34,7 +34,7 @@ Shader "Map/CensusShader"
                 float4 vertex : SV_POSITION;
             };
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -42,9 +42,11 @@ Shader "Map/CensusShader"
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                return lerp(_ColorLow, _ColorHigh, _RatioArray[i.uv.x]);
+                const float val = (clamp(_Min, _Max, _RatioArray[i.uv.x]) - _Min) / (_Max - _Min);
+                fixed3 col = tex2D(_ColorRamp, val).rgb;
+                return fixed4(col.rgb, 0.2);
             }
             ENDCG
         }
