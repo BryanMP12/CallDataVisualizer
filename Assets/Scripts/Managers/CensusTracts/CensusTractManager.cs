@@ -146,7 +146,7 @@ namespace Managers.CensusTracts {
             float max = censusTractWorkers.Select(func).Max();
             for (int i = 0; i < censusTractWorkers.Count; i++) ratios[i] = func(censusTractWorkers[i]) / max;
             censusTractMaterial.SetFloatArray(SPID._RatioArray, ratios);
-            tractViewer.SetMoranValue(-1);
+            tractViewer.SetMoranValue(null);
             UpdateColorRamp(ColorRampType.Count, max);
         }
         void SetRatioColors(CensusDataRatio type) {

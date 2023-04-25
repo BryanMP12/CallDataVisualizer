@@ -20,14 +20,19 @@ namespace General {
             if (Input.GetMouseButton(0)) Drag(cam.ScreenToWorldPoint(Input.mousePosition), clickZ);
             Scroll(Input.mouseScrollDelta, cam.ScreenToViewportPoint(Input.mousePosition));
         }
+        bool uiMouseMode;
         void Click(Vector2 position, bool holdZ) {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+            if (EventSystem.current.IsPointerOverGameObject()) {
+                uiMouseMode = true;
+                return;
+            }
+            uiMouseMode = false;
             initialLocation = position;
             if (holdZ) ClickZ?.Invoke(position);
             else ClickNone?.Invoke(position);
         }
         void Drag(Vector2 position, bool holdZ) {
-            if (EventSystem.current.IsPointerOverGameObject()) return;
+            if (uiMouseMode) return;
             Vector2 difference = initialLocation - position;
             if (difference.magnitude < 0.1f) return;
             if (holdZ) return;

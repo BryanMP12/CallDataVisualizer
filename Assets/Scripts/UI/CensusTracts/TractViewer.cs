@@ -30,7 +30,7 @@ namespace UI.CensusTracts {
         Canvas canvas;
         void Awake() { canvas = GetComponent<Canvas>(); }
         public bool Enabled { get; set; }
-        public void SetMoranValue(float value) => moranValue.SetText(value > 0 ? $"Moran's I: {value:##.0000}" : "Moran's I: ---");
+        public void SetMoranValue(float? value) => moranValue.SetText(value != null ? $"Moran's I: {value.Value:##.0000}" : "Moran's I: ---");
         public void EnableDisplay() => canvas.enabled = Enabled = true;
         public void DisableDisplay() => canvas.enabled = Enabled = false;
         void TurnOffAll() {

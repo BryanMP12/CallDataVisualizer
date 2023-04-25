@@ -13103,6 +13103,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  frameRate: 80
 --- !u!1 &964706615
 GameObject:
   m_ObjectHideFlags: 0

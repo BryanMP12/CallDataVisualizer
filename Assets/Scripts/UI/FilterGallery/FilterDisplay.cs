@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using General;
 using UI.Gallery;
 using UnityEngine;
@@ -27,7 +28,8 @@ namespace UI.FilterGallery {
             canvas = GetComponent<Canvas>();
             Enabled = false;
         }
-        public void InitializeOrders(Action nameOrderT, Action countOrderT, Action nonOfficerOrderT, Action officerOrderT, Action[] priorityOrderT) {
+        public void InitializeOrders(Action nameOrderT, Action countOrderT, Action nonOfficerOrderT,
+            Action officerOrderT, Action[] priorityOrderT) {
             nameOrderButton.SetAction(delegate {
                 ResetAllOrderButtonVisuals();
                 nameOrderT.Invoke();
@@ -36,6 +38,27 @@ namespace UI.FilterGallery {
             totalCountOrderButton.SetAction(delegate {
                 ResetAllOrderButtonVisuals();
                 countOrderT.Invoke();
+                {
+                    StringBuilder builder = new StringBuilder();
+                    StringBuilder priorityBuilder = new StringBuilder();
+                    int count = 0;
+                    const int maxCount = 30;
+                    foreach (FilterElementRep rep in Reps) {
+                        priorityBuilder.Clear();
+                        priorityBuilder.Append("$");
+                        for (int i = 5; i >= 0; i--) {
+                            if (rep.PriorityCount[i] == 0) continue;
+                            priorityBuilder.Append($"{i}|{rep.PriorityCount[i]}\\ ");
+                        }
+                        priorityBuilder.Append("$");
+                        builder.Append(
+                            $"{rep.Name.Replace("&", "\\&")} & {rep.TotalCount} & {rep.NonOfficerInitiatedCount()} & {priorityBuilder.ToString()} &  \\\\ \n");
+                        
+                        count++;
+                        if (count >= maxCount) break;
+                    }
+                    Debug.Log(builder.ToString());
+                }
                 totalCountOrderButton.SetVisual(1);
             });
             nonOfficerInitiatedOrderButton.SetAction(delegate {
@@ -71,9 +94,14 @@ namespace UI.FilterGallery {
             officerInitiatedOrderButton.ResetVisual();
             for (int i = 0; i < 6; i++) priorityOrderButton[i].ResetVisual();
         }
-        public void InitializeToggles(Func<bool> nonOfficerInitiatedT, Func<bool> officerInitiatedT, Func<bool>[] priorityT) {
-            nonOfficerInitiatedToggle.SetAction(delegate { nonOfficerInitiatedToggle.SetVisual(nonOfficerInitiatedT.Invoke()); });
-            officerInitiatedToggle.SetAction(delegate { officerInitiatedToggle.SetVisual(officerInitiatedT.Invoke()); });
+        public void InitializeToggles(Func<bool> nonOfficerInitiatedT, Func<bool> officerInitiatedT,
+            Func<bool>[] priorityT) {
+            nonOfficerInitiatedToggle.SetAction(delegate {
+                nonOfficerInitiatedToggle.SetVisual(nonOfficerInitiatedT.Invoke());
+            });
+            officerInitiatedToggle.SetAction(delegate {
+                officerInitiatedToggle.SetVisual(officerInitiatedT.Invoke());
+            });
             for (int i = 0; i < 6; i++) {
                 int index = i;
                 priorityToggles[i].SetAction(delegate { priorityToggles[index].SetVisual(priorityT[index].Invoke()); });
