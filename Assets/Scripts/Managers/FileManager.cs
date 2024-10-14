@@ -34,8 +34,8 @@ namespace Managers {
             fileSelectionDisplay.AddDownloadListener(delegate { StartCoroutine(DetroitDatasetAPICaller.DownloadLatestDataset()); });
         }
         void OnDownloadProcessStarted() {
-            string start = DateTime.Now.ToString("MM/dd/yy");
-            string end = DateTime.Now.Subtract(TimeSpan.FromDays(30)).ToString("MM/dd/yy");
+            string start = DateTime.Now.Subtract(TimeSpan.FromDays(30)).ToString("MM/dd/yy");
+            string end = DateTime.Now.ToString("MM/dd/yy");
             _downloadStatusDisplay.Initialize(start, end);
         }
         void OnDownloadProgressUpdated(int current, int total) {
@@ -45,9 +45,15 @@ namespace Managers {
             _downloadStatusDisplay.SetProgress(totalCount, totalCount);
             List<APIModels.Data> data = DataInterpreter.DeserializeAPIData(list);
             SerializedPointHolder sph = SerializedPointHolder.APIDataToSerializedPointHolder(data, totalCount);
+            #if !UNITY_WEBGL
             string filePath = FileSaver.WritePoints(sph.name, sph, true);
             fileSelectionDisplay.AddRep(NewRep(filePath));
+            #else
+            PointsHolder.SetData(sph);
+            CameraControl.SetCameraMovementState(true);
+            #endif
             _downloadStatusDisplay.Close();
+            GetComponent<Canvas>().enabled = false;
         }
         static void LoadFile(string filePath) {
             SerializedPointHolder sph = FileSaver.LoadPointsWithPath(filePath);
