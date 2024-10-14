@@ -14,28 +14,28 @@ namespace Core.MapDownloader {
         const string GetCountOnlyURL =
             "https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/cad_30d_lookback/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&returnCountOnly=true&outSR=4326&f=json";
         const int APIMaxRecordCount = 1000; //This is a hard limit set by the data provider
-        public static IEnumerator DownloadDataset(Action<List<string>, int> finishDownloadAction) {
-            int count;
-            {
-                UnityWebRequest www = JsonDownloader(GetCountOnlyURL);
-                yield return SendRequest(www);
-                string result = DownloadHandlerBuffer.GetContent(www);
-                count = DataInterpreter.DeserializeCountResult(result);
-                Debug.Log($"DataCount: {count}");
+        public static event Action DownloadProcessStarted;
+        //Current, Total
+        public static event Action<int, int> DownloadProgressUpdated;
+        //Calls, Total
+        public static event Action<List<string>, int> DownloadCompleted;
+        public static IEnumerator DownloadLatestDataset() {
+            UnityWebRequest initialRequest = JsonDownloader(GetCountOnlyURL);
+            DownloadProcessStarted?.Invoke();
+            yield return SendRequest(initialRequest);
+            string result = DownloadHandlerBuffer.GetContent(initialRequest);
+            int totalCount = DataInterpreter.DeserializeCountResult(result);
+
+            int callsRequired = (totalCount - 1) / APIMaxRecordCount + 1;
+            List<string> jsonList = new List<string>();
+            for (int i = 0; i < callsRequired; i++) {
+                UnityWebRequest downloadRequest = JsonDownloader(Last30DaysUrl(i * APIMaxRecordCount));
+                yield return SendRequest(downloadRequest);
+                //
+                DownloadProgressUpdated?.Invoke(Mathf.Min((i + 1) * APIMaxRecordCount, totalCount), totalCount);
+                jsonList.Add(downloadRequest.downloadHandler.text);
             }
-            {
-                int callsRequired = (count - 1) / APIMaxRecordCount + 1;
-                List<string> jsonList = new List<string>();
-                //callsRequired = 2; //temp for testing
-                //count = 2000; //temp for testing
-                for (int i = 0; i < callsRequired; i++)
-                {
-                    UnityWebRequest www = JsonDownloader(Last30DaysUrl(i * APIMaxRecordCount));
-                    yield return SendRequest(www);
-                    jsonList.Add(www.downloadHandler.text);
-                }
-                finishDownloadAction?.Invoke(jsonList, count);
-            }
+            DownloadCompleted?.Invoke(jsonList, totalCount);
         }
         static UnityWebRequest JsonDownloader(string url) => new UnityWebRequest(url, "GET") {downloadHandler = new DownloadHandlerBuffer()};
         static IEnumerator SendRequest(UnityWebRequest www) {

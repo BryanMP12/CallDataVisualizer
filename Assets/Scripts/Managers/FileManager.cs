@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Core.CensusTracts;
 using Core.Files;
@@ -9,6 +10,7 @@ using Core.RawDataInterpreter.CallData;
 using Core.RawDataInterpreter.Shapefiles;
 using Core.RawDataInterpreter.TractData;
 using General;
+using UI.DownloadStatus;
 using UI.FileSelectionGallery;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -19,17 +21,33 @@ namespace Managers {
     public sealed class FileManager : MonoBehaviour {
         FileSelectionDisplay fileSelectionDisplay;
         [SerializeField] CensusTractHolder censusTractHolder;
-        void Awake() => fileSelectionDisplay = GetComponent<FileSelectionDisplay>();
+        [SerializeField] DownloadStatusDisplay _downloadStatusDisplay;
+        void Awake() {
+            fileSelectionDisplay = GetComponent<FileSelectionDisplay>();
+            DetroitDatasetAPICaller.DownloadProcessStarted += OnDownloadProcessStarted;
+            DetroitDatasetAPICaller.DownloadProgressUpdated += OnDownloadProgressUpdated;
+            DetroitDatasetAPICaller.DownloadCompleted += OnDownloadCompleted;
+        }
         void Start() {
             string[] files = FileSaver.GetDatasets();
             foreach (string path in files) fileSelectionDisplay.AddRep(NewRep(path));
-            fileSelectionDisplay.AddDownloadListener(delegate { StartCoroutine(DetroitDatasetAPICaller.DownloadDataset(OnFinishDownload)); });
+            fileSelectionDisplay.AddDownloadListener(delegate { StartCoroutine(DetroitDatasetAPICaller.DownloadLatestDataset()); });
         }
-        void OnFinishDownload(List<string> list, int count) {
+        void OnDownloadProcessStarted() {
+            string start = DateTime.Now.ToString("MM/dd/yy");
+            string end = DateTime.Now.Subtract(TimeSpan.FromDays(30)).ToString("MM/dd/yy");
+            _downloadStatusDisplay.Initialize(start, end);
+        }
+        void OnDownloadProgressUpdated(int current, int total) {
+            _downloadStatusDisplay.SetProgress(current, total);
+        }
+        void OnDownloadCompleted(List<string> list, int totalCount) {
+            _downloadStatusDisplay.SetProgress(totalCount, totalCount);
             List<APIModels.Data> data = DataInterpreter.DeserializeAPIData(list);
-            SerializedPointHolder sph = SerializedPointHolder.APIDataToSerializedPointHolder(data, count);
+            SerializedPointHolder sph = SerializedPointHolder.APIDataToSerializedPointHolder(data, totalCount);
             string filePath = FileSaver.WritePoints(sph.name, sph, true);
             fileSelectionDisplay.AddRep(NewRep(filePath));
+            _downloadStatusDisplay.Close();
         }
         static void LoadFile(string filePath) {
             SerializedPointHolder sph = FileSaver.LoadPointsWithPath(filePath);

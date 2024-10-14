@@ -10,6 +10,8 @@ namespace UI {
         void Start() {
             InitializeAddonList(leftToolBarAddons);
             InitializeAddonList(rightToolBarAddons);
+            //Initialize with the File View
+            ToggleAddon(leftToolBarAddons, 2);
         }
         static void InitializeAddonList(IReadOnlyList<Addon> addonList) {
             for (int i = 0; i < addonList.Count; i++) {
