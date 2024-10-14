@@ -30,7 +30,11 @@ namespace Managers {
         }
         void Start() {
             string[] files = FileSaver.GetDatasets();
-            foreach (string path in files) fileSelectionDisplay.AddRep(NewRep(path));
+            foreach (string path in files)
+                fileSelectionDisplay.AddRep(new FileSelectionElementRep(path, delegate {
+                    LoadFile(path);
+                    fileSelectionDisplay.DisableDisplay();
+                }));
             fileSelectionDisplay.AddDownloadListener(delegate { StartCoroutine(DetroitDatasetAPICaller.DownloadLatestDataset()); });
         }
         void OnDownloadProcessStarted() {
@@ -38,32 +42,25 @@ namespace Managers {
             string end = DateTime.Now.ToString("MM/dd/yy");
             _downloadStatusDisplay.Initialize(start, end);
         }
-        void OnDownloadProgressUpdated(int current, int total) {
-            _downloadStatusDisplay.SetProgress(current, total);
-        }
+        void OnDownloadProgressUpdated(int current, int total) { _downloadStatusDisplay.SetProgress(current, total); }
         void OnDownloadCompleted(List<string> list, int totalCount) {
             _downloadStatusDisplay.SetProgress(totalCount, totalCount);
             List<APIModels.Data> data = DataInterpreter.DeserializeAPIData(list);
             SerializedPointHolder sph = SerializedPointHolder.APIDataToSerializedPointHolder(data, totalCount);
-            #if !UNITY_WEBGL
             string filePath = FileSaver.WritePoints(sph.name, sph, true);
-            fileSelectionDisplay.AddRep(NewRep(filePath));
-            #else
-            PointsHolder.SetData(sph);
-            CameraControl.SetCameraMovementState(true);
-            #endif
+            fileSelectionDisplay.AddRep(
+                new FileSelectionElementRep(filePath, delegate {
+                    LoadFile(filePath);
+                    fileSelectionDisplay.DisableDisplay();
+                })
+            );
             _downloadStatusDisplay.Close();
-            GetComponent<Canvas>().enabled = false;
         }
         static void LoadFile(string filePath) {
             SerializedPointHolder sph = FileSaver.LoadPointsWithPath(filePath);
             PointsHolder.SetData(sph);
             CameraControl.SetCameraMovementState(true);
         }
-        FileSelectionElementRep NewRep(string filePath) => new FileSelectionElementRep(filePath, delegate {
-            LoadFile(filePath);
-            fileSelectionDisplay.DisableDisplay();
-        });
 #if UNITY_EDITOR
         [ContextMenu("CreateCensusTractHolder")]
         public void CreateCensusTractHolder() {
