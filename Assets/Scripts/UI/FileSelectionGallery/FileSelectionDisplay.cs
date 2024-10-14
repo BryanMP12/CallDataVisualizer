@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.FileSelectionGallery {
-    public class FileSelectionDisplay : PooledGallery<FileSelectionElementRep>, IAddon {
+    public sealed class FileSelectionDisplay : PooledGallery<FileSelectionElementRep>, IAddon {
         [SerializeField] Button downloadButton;
         Canvas canvas;
         Action downloadAction;

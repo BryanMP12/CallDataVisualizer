@@ -4,7 +4,7 @@ using Core.RawDataInterpreter.TractData;
 
 namespace Core.CensusTracts {
     [Serializable]
-    public class CensusTractData {
+    public sealed class CensusTractData {
         public int[] BorderingCensuses;
         public int TotalPopulation; //P0010001
         //

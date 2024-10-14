@@ -19,7 +19,7 @@ namespace Core.Points {
         }
     }
     [Serializable]
-    public class DescriptionCount {
+    public sealed class DescriptionCount {
         public string Name;
         public int TotalCount;
         public int[] PriorityCount;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
-    public class SwitchButton : MonoBehaviour {
+    public sealed class SwitchButton : MonoBehaviour {
         TextMeshProUGUI text;
         RawImage image;
         Button button;

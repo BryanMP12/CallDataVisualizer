@@ -11,7 +11,7 @@ using UnityEngine;
 using Workers;
 
 namespace Managers.CensusTracts {
-    public partial class CensusTractManager : MonoBehaviour {
+    public sealed partial class CensusTractManager : MonoBehaviour {
         [SerializeField] CensusTractHolder holder;
         [SerializeField] FilterManager filterManager;
         [SerializeField] TractViewer tractViewer;
@@ -92,12 +92,12 @@ namespace Managers.CensusTracts {
             );
         }
         void OnEnable() {
-            InputManager.ClickZ += OnClickNone;
+            InputManager.TractClick += OnTractClick;
             FilterManager.FilterChanged += OnFilterChanged;
             PointsHolder.DataSet += OnDataSet;
         }
         void OnDisable() {
-            InputManager.ClickZ -= OnClickNone;
+            InputManager.TractClick -= OnTractClick;
             FilterManager.FilterChanged -= OnFilterChanged;
             PointsHolder.DataSet -= OnDataSet;
         }

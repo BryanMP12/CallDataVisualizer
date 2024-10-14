@@ -3,7 +3,7 @@ using UI.Gallery;
 using UnityEngine;
 
 namespace UI.FileSelectionGallery {
-    public class FileSelectionElementRep : ElementRep {
+    public sealed class FileSelectionElementRep : ElementRep {
         public readonly string FilePath;
         readonly Action LoadButtonClicked;
         public FileSelectionElementRep(string path, Action loadButtonAction) => (FilePath, LoadButtonClicked) = (path, loadButtonAction);

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.FileSelectionGallery {
-    public class FileSelectionElement : MonoBehaviour, IGalleryElement {
+    public sealed class FileSelectionElement : MonoBehaviour, IGalleryElement {
         [SerializeField] Image baseImage;
         [SerializeField] TextMeshProUGUI fileName;
         [SerializeField] TextMeshProUGUI filePath;

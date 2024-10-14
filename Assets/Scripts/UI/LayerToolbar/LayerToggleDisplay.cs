@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.LayerToolbar {
-    public class LayerToggleDisplay : MonoBehaviour, IAddon {
+    public sealed class LayerToggleDisplay : MonoBehaviour, IAddon {
         [SerializeField] SwitchButton showPointSwitch;
         [SerializeField] Slider pointSizeSlider;
         [SerializeField] SwitchButton showHeatmapSwitch;

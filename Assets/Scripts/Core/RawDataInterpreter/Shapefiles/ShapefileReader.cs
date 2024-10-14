@@ -8,7 +8,6 @@ using Point = NetTopologySuite.Geometries.Point;
 
 namespace Core.RawDataInterpreter.Shapefiles {
     public static class ShapefileReader {
-        //const string path = "C:\\Users\\inazu\\Downloads\\tl_2020_26_tract\\tl_2020_26_tract";
         public static List<CensusTract> ReadShapefile(string path) {
             List<CensusTract> censusTracts = new List<CensusTract>();
             foreach (Feature feature in Shapefile.ReadAllFeatures(path)) {

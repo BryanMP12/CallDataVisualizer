@@ -4,20 +4,20 @@
 //Not the API version.
 namespace Core.RawDataInterpreter.CallData {
     public static class ManualModels {
-        public class Data {
+        public sealed class Data {
             public string type { get; set; }
             public string name { get; set; }
             public CRS crs { get; set; }
             public List<Feature> features { get; set; }
         }
-        public class CRS {
+        public sealed class CRS {
             string type { get; set; }
             CRSProperties properties { get; set; }
         }
-        public class CRSProperties {
+        public sealed class CRSProperties {
             public string name { get; set; }
         }
-        public class Feature {
+        public sealed class Feature {
             public string type { get; set; }
             public Properties properties { get; set; }
         }

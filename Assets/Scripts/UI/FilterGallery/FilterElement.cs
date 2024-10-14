@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace UI.FilterGallery {
-    public class FilterElement : MonoBehaviour, IGalleryElement {
+    public sealed class FilterElement : MonoBehaviour, IGalleryElement {
         [SerializeField] TextImage nameText;
         [SerializeField] TextImage countText;
         [SerializeField] TextImage nonOfficerInitiatedCountText;

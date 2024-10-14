@@ -1,14 +1,14 @@
 ﻿using System;
 
 namespace Managers.CensusTracts {
-    public partial class CensusTractManager {
-        class ToggleCountRatioHolder {
+    public sealed partial class CensusTractManager {
+        sealed class ToggleCountRatioHolder {
             public bool ToggleVal;
             public readonly CensusDataCount CountType;
             public readonly CensusDataRatio RatioType;
             public ToggleCountRatioHolder(CensusDataCount c, CensusDataRatio r) => (CountType, RatioType) = (c, r);
         }
-        class ToggleCountHolder {
+        sealed class ToggleCountHolder {
             public readonly CensusDataCount CountType;
             public ToggleCountHolder(CensusDataCount c) => (CountType) = (c);
         }

@@ -13,7 +13,7 @@ namespace Core.MapDownloader {
             $"returnGeometry=false&resultOffset={offset}&outSR=4326&f=json";
         const string GetCountOnlyURL =
             "https://services2.arcgis.com/qvkbeam7Wirps6zC/arcgis/rest/services/cad_30d_lookback/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&returnCountOnly=true&outSR=4326&f=json";
-        const int APIMaxRecordCount = 1000;
+        const int APIMaxRecordCount = 1000; //This is a hard limit set by the data provider
         public static IEnumerator DownloadDataset(Action<List<string>, int> finishDownloadAction) {
             int count;
             {

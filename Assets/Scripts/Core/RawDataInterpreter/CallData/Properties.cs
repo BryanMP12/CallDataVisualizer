@@ -1,5 +1,5 @@
 ﻿namespace Core.RawDataInterpreter.CallData {
-    public class Properties {
+    public sealed class Properties {
         // public ulong incident_id { get; set; }
         // public string agency { get; set; }
         // public string incident_address { get; set; }

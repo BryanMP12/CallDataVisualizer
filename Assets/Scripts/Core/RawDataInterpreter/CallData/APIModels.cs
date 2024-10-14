@@ -3,10 +3,10 @@
 //These models are used for when you downloaded with the API
 namespace Core.RawDataInterpreter.CallData {
     public static class APIModels {
-        public class Count {
+        public sealed class Count {
             public int count;
         }
-        public class Data {
+        public sealed class Data {
             public string objectIdFieldName { get; set; }
             public UniqueIdField uniqueIdField { get; set; }
             public string globalIdFieldName { get; set; }
@@ -16,15 +16,15 @@ namespace Core.RawDataInterpreter.CallData {
             public bool exceededTransferLimit { get; set; }
             public List<Feature> features { get; set; }
         }
-        public class UniqueIdField {
+        public sealed class UniqueIdField {
             public string name { get; set; }
             public bool isSystemMaintained { get; set; }
         }
-        public class SpatialReference {
+        public sealed class SpatialReference {
             public int wkid { get; set; }
             public int latestWkid { get; set; }
         }
-        public class Field {
+        public sealed class Field {
             public string name;
             public string type;
             public string alias;
@@ -33,7 +33,7 @@ namespace Core.RawDataInterpreter.CallData {
             public string domain;
             public string defaultValue;
         }
-        public class Feature {
+        public sealed class Feature {
             public Properties attributes { get; set; }
         }
     }

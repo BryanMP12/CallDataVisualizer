@@ -8,7 +8,7 @@ using UI.LayerToolbar;
 using UnityEngine;
 
 namespace Managers.RenderBuffers {
-    public partial class RenderBufferManager : MonoBehaviour {
+    public sealed partial class RenderBufferManager : MonoBehaviour {
         [Header("Points")]
         //PointRenderer
         [SerializeField]

@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 
 namespace UI.CensusTracts {
-    public class TractViewer : MonoBehaviour, IAddon {
+    public sealed class TractViewer : MonoBehaviour, IAddon {
         [SerializeField] TextMeshProUGUI tractNumberText;
         //
         [SerializeField] TractViewerElement totalPopulationText;

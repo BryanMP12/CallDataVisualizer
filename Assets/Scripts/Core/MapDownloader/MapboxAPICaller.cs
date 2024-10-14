@@ -8,13 +8,13 @@ using UnityEngine.Networking;
 namespace Core.MapDownloader {
     public enum MapStyle { DarkNoLabels, Satellite }
     public static class MapboxAPICaller {
-        const string ACCESS_TOKEN = "pk.eyJ1IjoiYnJ5YW5waSIsImEiOiJjbGV4dHVmNXgwMDRrM3Ztc3JybW52bDlvIn0.7TqnziSGXnoGv0DPjFyEBQ";
+        const string MapBoxAccessToken = "";
         static string GetURL(double lon1, double lat1, double lon2, double lat2, int width, int height, MapStyle style) {
             string url =
                 $"https://api.mapbox.com/styles/v1/bryanpi/{Styles[(int) style]}/static/" +
                 $"[{lon1},{lat1},{lon2},{lat2}]/{width}x{height}@2x?" +
                 $"logo=false&attribution=false&" +
-                $"access_token={ACCESS_TOKEN}";
+                $"access_token={MapBoxAccessToken}";
             return url;
         }
         static readonly string[] Styles = new string[2] {"clg55yp0y009501ppc0bbuoyj", "clg56pmlt000c01o66zot4qir"};

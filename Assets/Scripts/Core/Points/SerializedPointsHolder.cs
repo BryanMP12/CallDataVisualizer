@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Core.Points {
     [Serializable]
-    public class SerializedPointHolder {
+    public sealed class SerializedPointHolder {
         public string name;
         public int TotalPointCount { get; private set; }
         public Point[] Points { get; private set; }

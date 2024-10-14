@@ -4,10 +4,10 @@ using UnityEngine;
 using Workers;
 
 namespace Managers.CensusTracts {
-    public partial class CensusTractManager {
+    public sealed partial class CensusTractManager {
         static readonly RaycastHit[] hits = new RaycastHit[5];
         CensusTractWorker selectedTractWorker;
-        void OnClickNone(Vector2 pos) {
+        void OnTractClick(Vector2 pos) {
             if(selectedTractWorker != null) selectedTractWorker.Deselect();
             selectedTractWorker = null;
             if (!FindIntersectingCensusTract(pos, out CensusTractWorker worker)) return;

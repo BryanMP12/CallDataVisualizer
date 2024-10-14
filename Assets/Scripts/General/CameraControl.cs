@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace General {
-    public class CameraControl : MonoBehaviour {
+    public sealed class CameraControl : MonoBehaviour {
         Camera cam;
         Transform camTransform;
         [SerializeField] float zoomSpeed;

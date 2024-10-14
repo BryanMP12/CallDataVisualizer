@@ -7,7 +7,7 @@ using UnityEngine;
 using System.Linq;
 
 namespace Workers {
-    public class CensusTractWorker : MonoBehaviour {
+    public sealed class CensusTractWorker : MonoBehaviour {
         [SerializeField] LineRenderer borderOutline;
         [SerializeField] MeshFilter filter;
         [SerializeField] MeshRenderer meshRenderer;

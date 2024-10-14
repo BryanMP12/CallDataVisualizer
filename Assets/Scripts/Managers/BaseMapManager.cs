@@ -4,7 +4,7 @@ using General;
 using UnityEngine;
 
 namespace Managers {
-    public class BaseMapManager : MonoBehaviour {
+    public sealed class BaseMapManager : MonoBehaviour {
         [SerializeField] Transform mapTransform;
         [SerializeField] Camera cam;
         [SerializeField] Material material;

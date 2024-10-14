@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 
 namespace Core.RawDataInterpreter.TractData {
-    public class Models {
-        public class Data {
+    public sealed class Models {
+        public sealed class Data {
             //public bool directed;
             //public bool multigraph;
             //public string[] graph;
             public List<Node> nodes;
             public List<List<Adjacency>> adjacency;
         }
-        public class Adjacency {
+        public sealed class Adjacency {
             public double shared_perim;
             public int id;
         }
-        public class Node {
+        public sealed class Node {
             // public bool boundary_node;
             // public double area;
             // public string STATEFP20;

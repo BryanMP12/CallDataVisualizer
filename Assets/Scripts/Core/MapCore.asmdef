@@ -2,8 +2,7 @@
     "name": "MapCore",
     "rootNamespace": "",
     "references": [
-        "GUID:b84c3c223fe72164583c407b6f4b9242",
-        "GUID:4b1d5458eb2b48a4e82ef6fcb5b25884"
+        "GUID:be5d38c875a6a13e4b2d2dd3ba32a2c5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

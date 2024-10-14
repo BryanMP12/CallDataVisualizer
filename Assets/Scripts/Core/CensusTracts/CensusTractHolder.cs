@@ -7,13 +7,13 @@ using UnityEditor;
 
 namespace Core.CensusTracts {
     [CreateAssetMenu(fileName = "CensusTractHolder", menuName = "CensusTract/Holder", order = 0)]
-    public class CensusTractHolder : ScriptableObject {
+    public sealed class CensusTractHolder : ScriptableObject {
         public List<CensusTract> CensusTracts = new List<CensusTract>();
     }
     
     #if UNITY_EDITOR
     [CustomEditor(typeof(CensusTractHolder))]
-    public class CensusTractHolderEditor : Editor {
+    public sealed class CensusTractHolderEditor : Editor {
         public override void OnInspectorGUI() {
             GUI.enabled = false;
             base.OnInspectorGUI();

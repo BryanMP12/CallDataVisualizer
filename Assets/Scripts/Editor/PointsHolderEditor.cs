@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Editor {
     [CustomEditor(typeof(PointsHolder))]
-    public class PointsHolderEditor : UnityEditor.Editor {
+    public sealed class PointsHolderEditor : UnityEditor.Editor {
         SerializedProperty totalCount, priorityCounts, officerInitiatedCount, Descriptions;
         void OnEnable() {
             totalCount = serializedObject.FindProperty("totalCount");

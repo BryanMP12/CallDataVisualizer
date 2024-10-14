@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Managers.CensusTracts {
-    public partial class CensusTractManager {
+    public sealed partial class CensusTractManager {
         //true is count, false is ratio
         ColorRampType colorRampMode;
         //for count

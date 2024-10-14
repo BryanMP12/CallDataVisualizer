@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Core.CensusTracts {
     [Serializable]
-    public class CensusTract {
+    public sealed class CensusTract {
         public CensusNumber Number;
         public Coordinate Centroid;
         public List<Coordinate> Shape;

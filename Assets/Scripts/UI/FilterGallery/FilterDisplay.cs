@@ -5,7 +5,7 @@ using UI.Gallery;
 using UnityEngine;
 
 namespace UI.FilterGallery {
-    public class FilterDisplay : PooledGallery<FilterElementRep>, IAddon {
+    public sealed class FilterDisplay : PooledGallery<FilterElementRep>, IAddon {
         Canvas canvas;
         [Header("Titles")] [SerializeField] SwitchButton nameOrderButton;
         [SerializeField] SwitchButton totalCountOrderButton;

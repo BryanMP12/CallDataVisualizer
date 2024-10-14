@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI {
-    public class ToolbarAddonManager : MonoBehaviour {
+    public sealed class ToolbarAddonManager : MonoBehaviour {
         [SerializeField] List<Addon> leftToolBarAddons;
         [SerializeField] List<Addon> rightToolBarAddons;
         void Start() {

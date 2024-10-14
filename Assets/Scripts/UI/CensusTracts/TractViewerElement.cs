@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 
 namespace UI.CensusTracts {
-    public class TractViewerElement : MonoBehaviour {
+    public sealed class TractViewerElement : MonoBehaviour {
         SwitchButton switchButton;
         TextMeshProUGUI titleNameText;
         TextMeshProUGUI totalValue;

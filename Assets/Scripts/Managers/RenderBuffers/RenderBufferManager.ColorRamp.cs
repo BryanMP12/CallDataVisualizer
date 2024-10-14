@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 
 namespace Managers.RenderBuffers {
-    public partial class RenderBufferManager {
+    public sealed partial class RenderBufferManager {
         [SerializeField] TextMeshProUGUI minText;
         [SerializeField] TextMeshProUGUI maxText;
         void InitializeSliders() { ChangeIntensity(1); }

@@ -3,7 +3,7 @@ using UI.Gallery;
 using UnityEngine;
 
 namespace UI.FilterGallery {
-    public class FilterElementRep : ElementRep {
+    public sealed class FilterElementRep : ElementRep {
         //
         public readonly string Name;
         public readonly int TotalCount;

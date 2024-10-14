@@ -6,7 +6,7 @@ using UI.FilterGallery;
 using UnityEngine;
 
 namespace Managers {
-    public class FilterManager : MonoBehaviour {
+    public sealed class FilterManager : MonoBehaviour {
         FilterDisplay filterDisplay;
         bool[] descriptionsToRender;
         bool renderNonOfficerInitiated = true;

@@ -5,7 +5,7 @@ using UnityEngine;
 using Workers;
 
 namespace Managers.CensusTracts {
-    public partial class CensusTractManager {
+    public sealed partial class CensusTractManager {
         static float Moran(IReadOnlyList<CensusTractWorker> workers, IReadOnlyList<CensusTract> tracts, Func<CensusTractWorker, float> dataRatio) {
             Debug.Log($"Workers: {workers.Count}, Tracts: {tracts.Count}"); //Counts should be same
             //n = Census Tract Count
